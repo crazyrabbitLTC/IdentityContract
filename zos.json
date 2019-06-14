@@ -1,0 +1,8 @@
+{
+  "zosversion": "2.2",
+  "name": "Identity",
+  "version": "0.0.1",
+  "contracts": {
+    "ProxyAccount": "ProxyAccount"
+  }
+}
