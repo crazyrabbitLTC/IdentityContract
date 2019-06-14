@@ -1,17 +1,25 @@
 import React, { Component } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Web3Info from "./components/Web3Info/index.js";
-import { Loader } from 'rimble-ui';
+import { Loader } from "rimble-ui";
 
-import styles from './App.module.scss';
+import styles from "./App.module.scss";
 
 class App extends Component {
   state = {
-    storageValue: 0,
-    web3: null,
-    accounts: null,
-    contract: null,
-    route: window.location.pathname.replace("/","")
+    network: {
+      web3: null,
+      accounts: null,
+      networkType: null,
+      networkId: null,
+      providerType: null
+    },
+    localNetwork: { web3: null, accounts: null },
+    frontEnd: { route: window.location.pathname.replace("/", "") },
+    contracts: { artifacts: {}, instance: {} },
+    subscriptions: null,
+    error: { status: false, message: null },
+    fetchStatus: {loadApp: true}
   };
 
   getGanacheAddresses = async () => {
@@ -22,37 +30,133 @@ class App extends Component {
       return await this.ganacheProvider.eth.getAccounts();
     }
     return [];
-  }
+  };
 
   componentDidMount = async () => {
+    const network = await this.loadNetwork();
+    const localNetwork = await this.loadDevNetwork();
+    const artifacts = await this.loadArtifacts();
+    const instance = await this.loadContractInstances(artifacts, network);
+    
+    const contracts = {artifacts, instance};
+
+    this.setState({network, localNetwork, contracts, fetchStatus: {loadApp: false}});
+  };
+
+  loadArtifacts = async () => {
+    let Identity = {};
+    let MultiSigFactory = {};
+    let MultiSigWallet = {};
+
     try {
-      const isProd = process.env.NODE_ENV === 'production';
-      if (!isProd) {
-        // Get network provider and web3 instance.
-        const web3 = await getWeb3();
-        const ganacheAccounts = await this.getGanacheAddresses();
-        // Use web3 to get the user's accounts.
-        const accounts = await web3.eth.getAccounts();
-        // Get the contract instance.
-        const networkId = await web3.eth.net.getId();
-        const isMetaMask = web3.currentProvider.isMetaMask;
-        let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]): web3.utils.toWei('0');
-        balance = web3.utils.fromWei(balance, 'ether');
-        this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
-      }
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+      Identity = require("../../contracts/Identity.sol");
+      MultiSigFactory = require("../../contracts/GnosisMultiSig/MultiSigWalletFactory.sol");
+      MultiSigWallet = require("../../contracts/GnosisMultiSig/MultiSigWallet.sol");
+
+      let artifacts = { Identity, MultiSigFactory, MultiSigWallet };
+
+      return artifacts;
+    } catch (e) {
+      console.log(e);
+      let error = { status: true, message: e };
+      this.setState({ error });
     }
   };
 
-  componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
+  loadNetwork = async () => {
+    let web3 = null;
+    let accounts = null;
+    let networkId = null;
+    let networkType = null;
+    let providerType = null;
+
+    try {
+      web3 = await getWeb3();
+      accounts = await web3.eth.getAccounts();
+      networkId = await web3.eth.net.getId();
+      networkType = await web3.eth.net.getNetworkType();
+      providerType = web3.currentProvider.isMetaMask;
+
+      return { web3, accounts, networkType, networkId, providerType };
+    } catch (e) {
+      console.log(e);
+      let error = { status: true, message: e };
+      this.setState({ error });
     }
+  };
+
+  loadDevNetwork = async () => {
+    let web3 = null;
+    let accounts = null;
+    try {
+      web3 = await getGanacheWeb3();
+      accounts = await this.getGanacheAddresses();
+      let localWeb3 = { web3, accounts };
+      return localWeb3;
+    } catch (e) {
+      console.log(e);
+      let error = { status: true, message: e };
+      this.setState({ error });
+    }
+  };
+
+  loadContractInstances = async (artifacts, network) => {
+    const { Identity, MultiSigFactory, MultiSigWallet } = artifacts;
+    const { web3, networkId } = network;
+
+    let identityInstance = {};
+    let multiSigFactoryInstance = {};
+    let multiSigWalletInstance = {};
+
+    try {
+      if (Identity.networks) {
+        let deployedNetwork = null;
+        deployedNetwork = Identity.networks[networkId.toString()];
+
+        if (deployedNetwork) {
+          identityInstance = new web3.eth.Contract(
+            Identity.abi,
+            deployedNetwork && deployedNetwork.address
+          );
+        }
+      }
+
+      if (MultiSigFactory.networks) {
+        let deployedNetwork = null;
+        deployedNetwork = MultiSigFactory.networks[networkId.toString()];
+
+        if (deployedNetwork) {
+          multiSigFactoryInstance = new web3.eth.Contract(
+            MultiSigFactory.abi,
+            deployedNetwork && deployedNetwork.address
+          );
+        }
+      }
+
+      if (MultiSigWallet.networks) {
+        let deployedNetwork = null;
+        deployedNetwork = MultiSigWallet.networks[networkId.toString()];
+
+        if (deployedNetwork) {
+          multiSigWalletInstance = new web3.eth.Contract(
+            MultiSigWallet.abi,
+            deployedNetwork && deployedNetwork.address
+          );
+        }
+      }
+
+      const instance = {identityInstance, multiSigFactoryInstance,multiSigWalletInstance};
+      return instance;
+    } catch (e) {
+      console.log(e);
+      let error = { status: true, message: e };
+      this.setState({ error });
+    }
+
+  };
+
+  componentWillUnmount() {
+
   }
 
   renderLoader() {
@@ -74,7 +178,7 @@ class App extends Component {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-        <Web3Info {...this.state} />
+
       </div>
     );
   }
