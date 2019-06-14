@@ -6,6 +6,7 @@ import "contracts/openzeppelin-eth/roles/WhitelistAdminRole.sol";
 import "contracts/openzeppelin-eth/roles/WhitelistedRole.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
 
+
 //Mostly copied from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-725.md
 contract ProxyAccount is ERC725, WhitelistAdminRole, WhitelistedRole {
 
@@ -26,7 +27,7 @@ contract ProxyAccount is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     }
 
-    function initialize(address _owner, MultiSigWalletFactory _multiSigWalletFactory) initializer public {
+    function initialize2(address _owner, MultiSigWalletFactory _multiSigWalletFactory) initializer public {
         owner = _owner;
         WhitelistAdminRole.initialize(_owner);
         multiSigWalletFactory = _multiSigWalletFactory;

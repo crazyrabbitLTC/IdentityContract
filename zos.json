@@ -5,6 +5,7 @@
   "contracts": {
     "MultiSigWalletFactory": "MultiSigWalletFactory",
     "Factory": "Factory",
-    "Identity": "Identity"
+    "Identity": "Identity",
+    "IdentityFactory": "IdentityFactory"
   }
 }

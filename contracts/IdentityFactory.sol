@@ -4,6 +4,7 @@ import "./Identity.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
 import "zos-lib/contracts/Initializable.sol";
 import "tabookey-gasless/contracts/RelayRecipient.sol";
+import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
 
 contract IdentityFactory is RelayRecipient {
 
@@ -14,10 +15,10 @@ contract IdentityFactory is RelayRecipient {
 
     event identityCreated(address identityAddress, address owner);
 
-    function createIdentity(address _owner) public {
+    function createIdentity(address _owner, MultiSigWalletFactory _multiSig) public {
         Identity identity;
         identity = new Identity();
-        identity.initialize(_owner);
+        identity.initialize2(_owner, _multiSig);
         identities[identityCount.current()] = identity;
         identityCount.increment();
         emit identityCreated(address(identity), _owner);
