@@ -1,12 +1,11 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
-import Web3Info from "./components/Web3Info/index.js";
 import { Loader } from "rimble-ui";
 
 import styles from "./App.module.scss";
 
-class App extends Component {
-  state = {
+const App = () => {
+  const initialState = {
     network: {
       web3: null,
       accounts: null,
@@ -19,35 +18,32 @@ class App extends Component {
     contracts: { artifacts: {}, instance: {} },
     subscriptions: null,
     error: { status: false, message: null },
-    fetchStatus: {loadApp: true}
+    fetchStatus: { loadApp: true }
   };
 
-  getGanacheAddresses = async () => {
-    if (!this.ganacheProvider) {
-      this.ganacheProvider = getGanacheWeb3();
-    }
-    if (this.ganacheProvider) {
-      return await this.ganacheProvider.eth.getAccounts();
-    }
-    return [];
-  };
+  const [state, setState] = useState(initialState);
 
-  componentDidMount = async () => {
-    console.log(1)
-    const network = await this.loadNetwork();
-    console.log(2)
-    const localNetwork = await this.loadDevNetwork();
-    console.log(3)
-    const artifacts = await this.loadArtifacts();
-    console.log(4)
-    const instance = await this.loadContractInstances(artifacts, network);
-    
-    const contracts = {artifacts, instance};
+  useEffect(async () => {
+    console.log(1);
+    const network = await loadNetwork();
+    console.log(2);
+    const localNetwork = await loadDevNetwork();
+    console.log(3);
+    const artifacts = await loadArtifacts();
+    console.log(4);
+    const instance = await loadContractInstances(artifacts, network);
+    console.log(5);
+    const contracts = { artifacts, instance };
+    console.log(6);
+    setState({
+      network,
+      localNetwork,
+      contracts,
+      fetchStatus: { loadApp: false }
+    });
+   }, []);
 
-    this.setState({network, localNetwork, contracts, fetchStatus: {loadApp: false}});
-  };
-
-  loadArtifacts = async () => {
+  const loadArtifacts = async () => {
     let Identity = {};
     let MultiSigFactory = {};
     let MultiSigWallet = {};
@@ -63,11 +59,11 @@ class App extends Component {
     } catch (e) {
       console.log(e);
       let error = { status: true, message: e };
-      this.setState({ error });
+      setState({ error });
     }
   };
 
-  loadNetwork = async () => {
+  const loadNetwork = async () => {
     let web3 = null;
     let accounts = null;
     let networkId = null;
@@ -85,26 +81,26 @@ class App extends Component {
     } catch (e) {
       console.log(e);
       let error = { status: true, message: e };
-      this.setState({ error });
+      setState({ error });
     }
   };
 
-  loadDevNetwork = async () => {
+  const loadDevNetwork = async () => {
     let web3 = null;
     let accounts = null;
     try {
       web3 = await getGanacheWeb3();
-      accounts = await this.getGanacheAddresses();
+      accounts = await web3.eth.getAccounts();
       let localWeb3 = { web3, accounts };
       return localWeb3;
     } catch (e) {
       console.log(e);
       let error = { status: true, message: e };
-      this.setState({ error });
+      setState({ error });
     }
   };
 
-  loadContractInstances = async (artifacts, network) => {
+  const loadContractInstances = async (artifacts, network) => {
     const { Identity, MultiSigFactory, MultiSigWallet } = artifacts;
     const { web3, networkId } = network;
 
@@ -149,21 +145,20 @@ class App extends Component {
         }
       }
 
-      const instance = {identityInstance, multiSigFactoryInstance,multiSigWalletInstance};
+      const instance = {
+        identityInstance,
+        multiSigFactoryInstance,
+        multiSigWalletInstance
+      };
       return instance;
     } catch (e) {
       console.log(e);
       let error = { status: true, message: e };
-      this.setState({ error });
+      setState({ error });
     }
-
   };
 
-  componentWillUnmount() {
-
-  }
-
-  renderLoader() {
+  const renderLoader = () => {
     return (
       <div className={styles.loader}>
         <Loader size="80px" color="red" />
@@ -171,22 +166,23 @@ class App extends Component {
         <p> Unlock your metamask </p>
       </div>
     );
-  }
-
-  render() {
-    if (!this.state.network.web3) {
-      return this.renderLoader();
-    }
-    console.log(this.state);
+  };
+  const renderPage = () => {
     return (
       <div className={styles.App}>
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-
       </div>
     );
+  };
+
+  if (!state.network.web3) {
+    return renderLoader();
+  } else {
+    console.log(state);
+    return renderPage();
   }
-}
+};
 
 export default App;
