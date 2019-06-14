@@ -1,6 +1,6 @@
 pragma solidity ^0.5.4;
-import "./Factory.sol";
-import "./MultiSigWallet.sol";
+import "contracts/GnosisMultiSig/Factory.sol";
+import "contracts/GnosisMultiSig/MultiSigWallet.sol";
 
 
 /// @title Multisignature wallet factory - Allows creation of multisig wallet.
@@ -14,11 +14,11 @@ contract MultiSigWalletFactory is Factory {
     /// @param _owners List of initial owners.
     /// @param _required Number of required confirmations.
     /// @return Returns wallet address.
-    function create(address[] _owners, uint _required)
+    function create(address[] memory _owners, uint _required)
         public
         returns (address wallet)
     {
-        wallet = new MultiSigWallet(_owners, _required);
+        wallet = address(new MultiSigWallet(_owners, _required));
         register(wallet);
     }
 }

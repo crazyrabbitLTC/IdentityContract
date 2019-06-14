@@ -37,6 +37,6 @@ contract Factory {
     {
         isInstantiation[instantiation] = true;
         instantiations[msg.sender].push(instantiation);
-        ContractInstantiation(msg.sender, instantiation);
+        emit ContractInstantiation(msg.sender, instantiation);
     }
 }

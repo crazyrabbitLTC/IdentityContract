@@ -18,7 +18,7 @@ contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, Whit
 
     //Social Recovery
 
-    function addSocialRecovery(address[] _owners, uint _required) external onlyWhitelistAdmin(){
+    function addSocialRecovery(address[] calldata _owners, uint _required) external onlyWhitelistAdmin(){
         address socialRecoveryAddress = MultiSigWalletFactory.create(_owners, _required);
         addWhitelistAdmin(socialRecoveryAddress);
 

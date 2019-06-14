@@ -42,7 +42,7 @@ contract TestToken {
      * bug it was not compatible with multisig wallets
      */
     modifier onlyPayloadSize(uint size) {
-        require(msg.data.length == size + 4);
+        require(msg.data.length == size + 4, "Incorect message size");
         _;
     }
 
@@ -54,10 +54,10 @@ contract TestToken {
         public
         returns (bool success)
     {
-        require(balances[msg.sender] >= _value);
+        require(balances[msg.sender] >= _value, "Balance is not high enough");
         balances[msg.sender] -= _value;
         balances[_to] += _value;
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
@@ -74,7 +74,7 @@ contract TestToken {
         balances[_to] += _value;
         balances[_from] -= _value;
         allowed[_from][msg.sender] -= _value;
-        Transfer(_from, _to, _value);
+        emit Transfer(_from, _to, _value);
         return true;
     }
 
@@ -87,7 +87,7 @@ contract TestToken {
         returns (bool success)
     {
         allowed[msg.sender][_spender] = _value;
-        Approval(msg.sender, _spender, _value);
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
