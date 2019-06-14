@@ -177,6 +177,7 @@ class App extends Component {
     if (!this.state.network.web3) {
       return this.renderLoader();
     }
+    console.log(this.state);
     return (
       <div className={styles.App}>
         <h1>Good to Go!</h1>
