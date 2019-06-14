@@ -3,6 +3,8 @@
   "name": "Identity",
   "version": "0.0.1",
   "contracts": {
-    "ProxyAccount": "ProxyAccount"
+    "MultiSigWalletFactory": "MultiSigWalletFactory",
+    "Factory": "Factory",
+    "Identity": "Identity"
   }
 }

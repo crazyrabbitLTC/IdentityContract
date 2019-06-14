@@ -6,15 +6,13 @@ import "contracts/openzeppelin-eth/roles/WhitelistAdminRole.sol";
 import "contracts/openzeppelin-eth/roles/WhitelistedRole.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
 
-
-
-
-
 //Mostly copied from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-725.md
-contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, WhitelistedRole {
+contract ProxyAccount is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     uint256 constant OPERATION_CALL = 0;
     uint256 constant OPERATION_CREATE = 1;
+
+    MultiSigWalletFactory multiSigWalletFactory;
 
     mapping(bytes32 => bytes) store;
 
@@ -23,16 +21,16 @@ contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, Whit
     //Social Recovery
 
     function addSocialRecovery(address[] calldata _owners, uint _required) external onlyWhitelistAdmin(){
-        address socialRecoveryAddress = MultiSigWalletFactory.create(_owners, _required);
+        address socialRecoveryAddress = multiSigWalletFactory.create(_owners, _required);
         addWhitelistAdmin(socialRecoveryAddress);
 
     }
 
-    function initialize(address _owner) initializer public {
+    function initialize(address _owner, MultiSigWalletFactory _multiSigWalletFactory) initializer public {
         owner = _owner;
         WhitelistAdminRole.initialize(_owner);
+        multiSigWalletFactory = _multiSigWalletFactory;
     }
-
 
     /*
     @ GSN FUNCTIONS

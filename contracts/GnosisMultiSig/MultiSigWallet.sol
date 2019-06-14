@@ -117,7 +117,7 @@ contract MultiSigWallet is RelayRecipient {
 
     function init_hub(RelayHub hub_addr) public {
     init_relay_hub(hub_addr);
-}
+    }
 
 
     /*
