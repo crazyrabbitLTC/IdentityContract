@@ -24,24 +24,19 @@ const App = () => {
   const [state, setState] = useState(initialState);
 
   useEffect(async () => {
-    console.log(1);
     const network = await loadNetwork();
-    console.log(2);
     const localNetwork = await loadDevNetwork();
-    console.log(3);
     const artifacts = await loadArtifacts();
-    console.log(4);
     const instance = await loadContractInstances(artifacts, network);
-    console.log(5);
     const contracts = { artifacts, instance };
-    console.log(6);
+
     setState({
       network,
       localNetwork,
       contracts,
       fetchStatus: { loadApp: false }
     });
-   }, []);
+  }, []);
 
   const loadArtifacts = async () => {
     let Identity = {};
