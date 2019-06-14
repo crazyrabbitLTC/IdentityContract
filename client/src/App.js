@@ -33,9 +33,13 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    console.log(1)
     const network = await this.loadNetwork();
+    console.log(2)
     const localNetwork = await this.loadDevNetwork();
+    console.log(3)
     const artifacts = await this.loadArtifacts();
+    console.log(4)
     const instance = await this.loadContractInstances(artifacts, network);
     
     const contracts = {artifacts, instance};
@@ -170,7 +174,7 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.web3) {
+    if (!this.state.network.web3) {
       return this.renderLoader();
     }
     return (
