@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
+import Boiler from "./components/boiler/boiler";
+
 import { Loader } from "rimble-ui";
 
 import styles from "./App.module.scss";
@@ -23,7 +25,9 @@ const App = () => {
 
   const [state, setState] = useState(initialState);
 
-  useEffect(async () => {
+  useEffect(() => {
+
+    const load = async () => {
     const network = await loadNetwork();
     const localNetwork = await loadDevNetwork();
     const artifacts = await loadArtifacts();
@@ -36,19 +40,24 @@ const App = () => {
       contracts,
       fetchStatus: { loadApp: false }
     });
+  }
+
+  load();
   }, []);
 
   const loadArtifacts = async () => {
     let Identity = {};
+    let IdentityFactory = {};
     let MultiSigFactory = {};
     let MultiSigWallet = {};
 
     try {
       Identity = require("../../contracts/Identity.sol");
+      IdentityFactory = require("../../contracts/IdentityFactory.sol");
       MultiSigFactory = require("../../contracts/GnosisMultiSig/MultiSigWalletFactory.sol");
       MultiSigWallet = require("../../contracts/GnosisMultiSig/MultiSigWallet.sol");
 
-      let artifacts = { Identity, MultiSigFactory, MultiSigWallet };
+      let artifacts = { Identity, IdentityFactory, MultiSigFactory, MultiSigWallet };
 
       return artifacts;
     } catch (e) {
@@ -96,10 +105,11 @@ const App = () => {
   };
 
   const loadContractInstances = async (artifacts, network) => {
-    const { Identity, MultiSigFactory, MultiSigWallet } = artifacts;
+    const { Identity, IdentityFactory, MultiSigFactory, MultiSigWallet } = artifacts;
     const { web3, networkId } = network;
 
     let identityInstance = {};
+    let identityFactoryInstance = {};
     let multiSigFactoryInstance = {};
     let multiSigWalletInstance = {};
 
@@ -111,6 +121,18 @@ const App = () => {
         if (deployedNetwork) {
           identityInstance = new web3.eth.Contract(
             Identity.abi,
+            deployedNetwork && deployedNetwork.address
+          );
+        }
+      }
+
+      if (IdentityFactory.networks) {
+        let deployedNetwork = null;
+        deployedNetwork = IdentityFactory.networks[networkId.toString()];
+
+        if (deployedNetwork) {
+          identityFactoryInstance = new web3.eth.Contract(
+            IdentityFactory.abi,
             deployedNetwork && deployedNetwork.address
           );
         }
@@ -142,6 +164,7 @@ const App = () => {
 
       const instance = {
         identityInstance,
+        identityFactoryInstance,
         multiSigFactoryInstance,
         multiSigWalletInstance
       };
@@ -168,6 +191,7 @@ const App = () => {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
+        <Boiler {...state}/>
       </div>
     );
   };
@@ -175,7 +199,6 @@ const App = () => {
   if (!state.network.web3) {
     return renderLoader();
   } else {
-    console.log(state);
     return renderPage();
   }
 };
