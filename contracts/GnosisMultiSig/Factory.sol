@@ -1,6 +1,9 @@
 pragma solidity ^0.5.4;
 
-contract Factory {
+import "zos-lib/contracts/Initializable.sol";
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+
+contract Factory is RelayRecipient {
 
     /*
      *  Events
@@ -36,7 +39,7 @@ contract Factory {
         internal
     {
         isInstantiation[instantiation] = true;
-        instantiations[msg.sender].push(instantiation);
-        emit ContractInstantiation(msg.sender, instantiation);
+        instantiations[get_sender()].push(instantiation);
+        emit ContractInstantiation(get_sender(), instantiation);
     }
 }

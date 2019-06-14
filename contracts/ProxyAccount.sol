@@ -2,15 +2,16 @@ pragma solidity ^0.5.4;
 
 import "./ERC725.sol";
 import "zos-lib/contracts/Initializable.sol";
-import "openzeppelin-eth/contracts/access/roles/WhitelistAdminRole.sol";
-import "openzeppelin-eth/contracts/access/roles/WhitelistedRole.sol";
+import "contracts/openzeppelin-eth/roles/WhitelistAdminRole.sol";
+import "contracts/openzeppelin-eth/roles/WhitelistedRole.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
-import "tabookey-gasless/contracts/RelayRecipient.sol";
+
+
 
 
 
 //Mostly copied from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-725.md
-contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, WhitelistedRole, RelayRecipient {
+contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, WhitelistedRole {
 
     uint256 constant OPERATION_CALL = 0;
     uint256 constant OPERATION_CREATE = 1;

@@ -1,5 +1,6 @@
 pragma solidity ^0.5.4;
 import "./MultiSigWallet.sol";
+import "tabookey-gasless/contracts/RelayRecipient.sol";
 
 
 /// @title Multisignature wallet with daily limit - Allows an owner to withdraw a daily limit without multisig.
@@ -46,8 +47,8 @@ contract MultiSigWalletWithDailyLimit is MultiSigWallet {
     /// @param transactionId Transaction ID.
     function executeTransaction(uint transactionId)
         public
-        ownerExists(msg.sender)
-        confirmed(transactionId, msg.sender)
+        ownerExists(get_sender())
+        confirmed(transactionId, get_sender())
         notExecuted(transactionId)
     {
         Transaction storage txn = transactions[transactionId];

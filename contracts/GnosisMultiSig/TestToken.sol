@@ -1,8 +1,8 @@
 pragma solidity ^0.5.4;
-
+import "tabookey-gasless/contracts/RelayRecipient.sol";
 
 /// @title Test token contract - Allows testing of token transfers with multisig wallet.
-contract TestToken {
+contract TestToken is RelayRecipient {
 
     /*
      *  Events
@@ -54,10 +54,10 @@ contract TestToken {
         public
         returns (bool success)
     {
-        require(balances[msg.sender] >= _value, "Balance is not high enough");
-        balances[msg.sender] -= _value;
+        require(balances[get_sender()] >= _value, "Balance is not high enough");
+        balances[get_sender()] -= _value;
         balances[_to] += _value;
-        emit Transfer(msg.sender, _to, _value);
+        emit Transfer(get_sender(), _to, _value);
         return true;
     }
 
@@ -70,10 +70,10 @@ contract TestToken {
         public
         returns (bool success)
     {
-        require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value);
+        require(balances[_from] >= _value && allowed[_from][get_sender()] >= _value);
         balances[_to] += _value;
         balances[_from] -= _value;
-        allowed[_from][msg.sender] -= _value;
+        allowed[_from][get_sender()] -= _value;
         emit Transfer(_from, _to, _value);
         return true;
     }
@@ -86,8 +86,8 @@ contract TestToken {
         public
         returns (bool success)
     {
-        allowed[msg.sender][_spender] = _value;
-        emit Approval(msg.sender, _spender, _value);
+        allowed[get_sender()][_spender] = _value;
+        emit Approval(get_sender(), _spender, _value);
         return true;
     }
 

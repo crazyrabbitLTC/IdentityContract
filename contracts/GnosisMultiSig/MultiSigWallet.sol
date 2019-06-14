@@ -1,9 +1,10 @@
 pragma solidity ^0.5.4;
 
+import "tabookey-gasless/contracts/RelayRecipient.sol";
 
 /// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
 /// @author Stefan George - <stefan.george@consensys.net>
-contract MultiSigWallet {
+contract MultiSigWallet is RelayRecipient {
 
     /*
      *  Events
@@ -44,7 +45,7 @@ contract MultiSigWallet {
      *  Modifiers
      */
     modifier onlyWallet() {
-        require(msg.sender == address(this));
+        require(get_sender() == address(this));
         _;
     }
 
@@ -96,8 +97,28 @@ contract MultiSigWallet {
         payable
     {
         if (msg.value > 0)
-            emit Deposit(msg.sender, msg.value);
+            emit Deposit(get_sender(), msg.value);
     }
+
+    /*
+    @GSN FUNCTIONS
+    */
+    function accept_relayed_call(address /*relay*/, address /*from*/,
+        bytes memory /*encoded_function*/, uint /*gas_price*/, 
+        uint /*transaction_fee*/ ) public view returns(uint32) {
+    return 0; // accept everything.
+    }
+    // nothing to be done post-call.
+    // still, we must implement this method.
+    function post_relayed_call(address /*relay*/, address /*from*/,
+        bytes memory /*encoded_function*/, bool /*success*/,
+        uint /*used_gas*/, uint /*transaction_fee*/ ) public {
+    }
+
+    function init_hub(RelayHub hub_addr) public {
+    init_relay_hub(hub_addr);
+}
+
 
     /*
      * Public functions
@@ -198,12 +219,12 @@ contract MultiSigWallet {
     /// @param transactionId Transaction ID.
     function confirmTransaction(uint transactionId)
         public
-        ownerExists(msg.sender)
+        ownerExists(get_sender())
         transactionExists(transactionId)
-        notConfirmed(transactionId, msg.sender)
+        notConfirmed(transactionId, get_sender())
     {
-        confirmations[transactionId][msg.sender] = true;
-        emit Confirmation(msg.sender, transactionId);
+        confirmations[transactionId][get_sender()] = true;
+        emit Confirmation(get_sender(), transactionId);
         executeTransaction(transactionId);
     }
 
@@ -211,20 +232,20 @@ contract MultiSigWallet {
     /// @param transactionId Transaction ID.
     function revokeConfirmation(uint transactionId)
         public
-        ownerExists(msg.sender)
-        confirmed(transactionId, msg.sender)
+        ownerExists(get_sender())
+        confirmed(transactionId, get_sender())
         notExecuted(transactionId)
     {
-        confirmations[transactionId][msg.sender] = false;
-        emit Revocation(msg.sender, transactionId);
+        confirmations[transactionId][get_sender()] = false;
+        emit Revocation(get_sender(), transactionId);
     }
 
     /// @dev Allows anyone to execute a confirmed transaction.
     /// @param transactionId Transaction ID.
     function executeTransaction(uint transactionId)
         public
-        ownerExists(msg.sender)
-        confirmed(transactionId, msg.sender)
+        ownerExists(get_sender())
+        confirmed(transactionId, get_sender())
         notExecuted(transactionId)
     {
         if (isConfirmed(transactionId)) {
