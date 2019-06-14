@@ -5,9 +5,12 @@ import "zos-lib/contracts/Initializable.sol";
 import "openzeppelin-eth/contracts/access/roles/WhitelistAdminRole.sol";
 import "openzeppelin-eth/contracts/access/roles/WhitelistedRole.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+
+
 
 //Mostly copied from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-725.md
-contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, WhitelistedRole {
+contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, WhitelistedRole, RelayRecipient {
 
     uint256 constant OPERATION_CALL = 0;
     uint256 constant OPERATION_CREATE = 1;
@@ -29,9 +32,30 @@ contract ProxyAccount is ERC725, MultiSigWalletFactory, WhitelistAdminRole, Whit
         WhitelistAdminRole.initialize(_owner);
     }
 
-    // ----------------
-    // Public functions
 
+    /*
+    @ GSN FUNCTIONS
+    */
+    function accept_relayed_call(address /*relay*/, address /*from*/,
+        bytes memory /*encoded_function*/, uint /*gas_price*/, 
+        uint /*transaction_fee*/ ) public view returns(uint32) {
+        return 0; // accept everything.
+    }
+
+    function post_relayed_call(address /*relay*/, address /*from*/,
+        bytes memory /*encoded_function*/, bool /*success*/,
+        uint /*used_gas*/, uint /*transaction_fee*/ ) public {
+    }
+
+    function init_hub(RelayHub hub_addr) public {
+        init_relay_hub(hub_addr);
+    }
+    /*
+    */
+
+    /*
+    @ Public Functions
+    */
     function () external payable {}
 
 
