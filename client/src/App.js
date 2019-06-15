@@ -26,23 +26,22 @@ const App = () => {
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-
     const load = async () => {
-    const network = await loadNetwork();
-    const localNetwork = await loadDevNetwork();
-    const artifacts = await loadArtifacts();
-    const instance = await loadContractInstances(artifacts, network);
-    const contracts = { artifacts, instance };
+      const network = await loadNetwork();
+      const localNetwork = await loadDevNetwork();
+      const artifacts = await loadArtifacts();
+      const instance = await loadContractInstances(artifacts, network);
+      const contracts = { artifacts, instance };
 
-    setState({
-      network,
-      localNetwork,
-      contracts,
-      fetchStatus: { loadApp: false }
-    });
-  }
+      setState({
+        network,
+        localNetwork,
+        contracts,
+        fetchStatus: { loadApp: false }
+      });
+    };
 
-  load();
+    load();
   }, []);
 
   const loadArtifacts = async () => {
@@ -57,7 +56,12 @@ const App = () => {
       MultiSigFactory = require("../../contracts/GnosisMultiSig/MultiSigWalletFactory.sol");
       MultiSigWallet = require("../../contracts/GnosisMultiSig/MultiSigWallet.sol");
 
-      let artifacts = { Identity, IdentityFactory, MultiSigFactory, MultiSigWallet };
+      let artifacts = {
+        Identity,
+        IdentityFactory,
+        MultiSigFactory,
+        MultiSigWallet
+      };
 
       return artifacts;
     } catch (e) {
@@ -105,7 +109,12 @@ const App = () => {
   };
 
   const loadContractInstances = async (artifacts, network) => {
-    const { Identity, IdentityFactory, MultiSigFactory, MultiSigWallet } = artifacts;
+    const {
+      Identity,
+      IdentityFactory,
+      MultiSigFactory,
+      MultiSigWallet
+    } = artifacts;
     const { web3, networkId } = network;
 
     let identityInstance = {};
@@ -191,7 +200,7 @@ const App = () => {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-        <Boiler {...state}/>
+        <Boiler {...state} />
       </div>
     );
   };
