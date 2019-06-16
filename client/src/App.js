@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Boiler from "./components/boiler/boiler";
-
+import CreateUser from "./components/createUser/CreateUser";
+import FundMetaMask from "./components/fundMetaMask";
 import { Loader } from "rimble-ui";
 
 import styles from "./App.module.scss";
@@ -20,10 +21,14 @@ const App = () => {
     contracts: { artifacts: {}, instance: {} },
     subscriptions: null,
     error: { status: false, message: null },
-    fetchStatus: { loadApp: true }
+    fetchStatus: { loadingApp: true, txPending: false },
+    appReady: false,
+    setAppState: null,
   };
 
   const [state, setState] = useState(initialState);
+
+  
 
   useEffect(() => {
     const load = async () => {
@@ -33,11 +38,13 @@ const App = () => {
       const instance = await loadContractInstances(artifacts, network);
       const contracts = { artifacts, instance };
 
-      setState({
+      setState({...state,
         network,
         localNetwork,
         contracts,
-        fetchStatus: { loadApp: false }
+        fetchStatus: { loadingApp: false, txPending: false },
+        appReady: true,
+        setAppState: setState,
       });
     };
 
@@ -200,12 +207,14 @@ const App = () => {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-        <Boiler {...state} />
+        <CreateUser {...state} />
+        <FundMetaMask {...state}/>
       </div>
     );
   };
 
   if (!state.network.web3) {
+    console.log("NOt rendering", state)
     return renderLoader();
   } else {
     return renderPage();

@@ -13,15 +13,16 @@ contract IdentityFactory is RelayRecipient {
 
     mapping(uint => Identity) public identities;
 
-    event identityCreated(address identityAddress, address owner);
+    event identityCreated(address identityAddress, address owner, uint identityId);
 
     function createIdentity(address _owner, MultiSigWalletFactory _multiSig) public {
+        uint identityId = identityCount.current();
         Identity identity;
         identity = new Identity();
         identity.initialize2(_owner, _multiSig);
-        identities[identityCount.current()] = identity;
+        identities[identityId] = identity;
         identityCount.increment();
-        emit identityCreated(address(identity), _owner);
+        emit identityCreated(address(identity), _owner, identityId);
     }
 
         /*
