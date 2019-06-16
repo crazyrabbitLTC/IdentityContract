@@ -3,9 +3,7 @@
   "name": "Identity",
   "version": "0.0.1",
   "contracts": {
-    "MultiSigWalletFactory": "MultiSigWalletFactory",
-    "Factory": "Factory",
-    "Identity": "Identity",
-    "IdentityFactory": "IdentityFactory"
+    "IdentityFactory": "IdentityFactory",
+    "MultiSigWalletFactory": "MultiSigWalletFactory"
   }
 }

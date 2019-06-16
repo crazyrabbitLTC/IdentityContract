@@ -6,21 +6,34 @@ import "zos-lib/contracts/Initializable.sol";
 import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
 
-contract IdentityFactory is RelayRecipient {
+
+contract IdentityFactory is RelayRecipient, Initializable {
 
     using Counters for Counters.Counter;
     Counters.Counter public identityCount;
 
+    MultiSigWalletFactory private multiSigWalletFactory;
+    bool public contractInitialized;
+
     mapping(uint => Identity) public identities;
 
     event identityCreated(address identityAddress, address owner, uint identityId);
+    event identityFactoryCreated(address factoryAddress, address multiSigAddress);
 
-    function createIdentity(address _owner, MultiSigWalletFactory _multiSig) public {
+    function initialize(MultiSigWalletFactory _multiSig) initializer public {
+        multiSigWalletFactory = _multiSig;
+        contractInitialized = true;
+        emit identityFactoryCreated(address(this), address(multiSigWalletFactory));
+    }
+
+    function createIdentity(address _owner, string memory _metadata) public {
         uint identityId = identityCount.current();
         Identity identity;
         identity = new Identity();
-        identity.initialize2(_owner, _multiSig);
+        identity.initialize2(_owner, multiSigWalletFactory);
+        identity.addIdMetadata(_metadata);
         identities[identityId] = identity;
+        
         identityCount.increment();
         emit identityCreated(address(identity), _owner, identityId);
     }

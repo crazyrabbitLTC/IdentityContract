@@ -12,42 +12,31 @@ const CreateUser = props => {
   console.log("MultiSigAddress", multiSigAddress);
   console.log(props);
 
-  const defaultStatus = {fetching: false, identityId: null};
+  const defaultStatus = {fetching: false, identityId: null, owner: null, identityAddress: null};
   const [status, setStatus] = useState(defaultStatus);
 
-  useEffect(()=> {
-    const subscription = web3.eth.subscribe('logs', {
-        address: "0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb",
-        topics: ['identityCreated']
-    }, function(error, result){
-        if (!error)
-            console.log("The Sub result", result);
-    });
-    // unsubscribes the subscription
-    // subscription.unsubscribe(function(error, success){
-    //     if(success)
-    //         console.log('Successfully unsubscribed!');
-    // });
-  }, [])
-
   const createIdentity = async () => {
-    // setAppState({
-    //   ...props,
-    //   fetchStatus: { loadingApp: false, txPending: true }
-    // });
+
     setStatus({fetching: true});
 
     const tx = await factory
-      .createIdentity(accounts[0], multiSigAddress)
+      .createIdentity(accounts[0], multiSigAddress, "This is smetadata!")
       .send({ from: accounts[0] });
     console.log("TransactionHash: ", tx);
+    let events = tx.events.identityCreated.returnValues;
+    let {identityAddress, owner, identityId} = tx.events.identityCreated.returnValues;
 
-    setStatus({fetching: false});
+    console.log(events);
+    setStatus({fetching: false, identityAddress, owner, identityId});
   };
 
-  const waitForTx = async () => {};
   return (
-    <div>
+    <div> 
+        <div>
+           Identity Address: {status.address}  
+           IdentityID: {status.identityId}  
+           OWner: {status.owner} 
+        </div>
       <Button size={"medium"} onClick={() => createIdentity()}>
         Click me!
       </Button>
