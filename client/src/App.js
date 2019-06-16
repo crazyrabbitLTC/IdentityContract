@@ -207,8 +207,8 @@ const App = () => {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-        {/* <CreateUser {...state} />
-        <FundMetaMask {...state}/> */}
+        <CreateUser {...state} />
+        <FundMetaMask {...state}/>
       </div>
     );
   };

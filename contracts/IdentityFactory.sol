@@ -26,14 +26,13 @@ contract IdentityFactory is RelayRecipient, Initializable {
         emit identityFactoryCreated(address(this), address(multiSigWalletFactory));
     }
 
-    function createIdentity(address _owner, string memory _metadata) public {
+    function createIdentity(address _owner, string calldata _metadata) external {
         uint identityId = identityCount.current();
         Identity identity;
         identity = new Identity();
         identity.initialize2(_owner, multiSigWalletFactory);
         identity.addIdMetadata(_metadata);
         identities[identityId] = identity;
-        
         identityCount.increment();
         emit identityCreated(address(identity), _owner, identityId);
     }

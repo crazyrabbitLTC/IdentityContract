@@ -7,9 +7,9 @@ const CreateUser = props => {
   const { web3, accounts, networkId } = network;
   const { identityFactoryInstance, multiSigFactoryInstance } = instance;
   const factory = identityFactoryInstance.methods;
-  const multiSigAddress =
-    contracts.artifacts.MultiSigFactory.networks[networkId].address;
-  console.log("MultiSigAddress", multiSigAddress);
+  // const multiSigAddress =
+  //   contracts.artifacts.MultiSigFactory.networks[networkId].address;
+  // console.log("MultiSigAddress", multiSigAddress);
   console.log(props);
 
   const defaultStatus = {fetching: false, identityId: null, owner: null, identityAddress: null};
@@ -20,7 +20,7 @@ const CreateUser = props => {
     setStatus({fetching: true});
 
     const tx = await factory
-      .createIdentity(accounts[0], multiSigAddress, "This is smetadata!")
+      .createIdentity(accounts[0], "This is smetadata!")
       .send({ from: accounts[0] });
     console.log("TransactionHash: ", tx);
     let events = tx.events.identityCreated.returnValues;
