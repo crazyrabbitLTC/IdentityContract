@@ -33,10 +33,10 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     }
 
-    function initialize2(address _owner, MultiSigWalletFactory _multiSigWalletFactory) initializer public {
-        owner = _owner;
-        WhitelistAdminRole.initialize(_owner);
-        WhitelistAdminRole.addWhitelistAdmin(address(this));
+    function addSocialRecoveryAddress(MultiSigWalletFactory _multiSigWalletFactory) onlyWhitelistAdmin() public {
+        owner = get_sender();
+        //WhitelistAdminRole.initialize(get_sender());
+        //WhitelistAdminRole.addWhitelistAdmin(get_sender());
         multiSigWalletFactory = _multiSigWalletFactory;
     }
 

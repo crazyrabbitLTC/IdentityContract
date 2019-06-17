@@ -17,7 +17,7 @@ contract IdentityFactory is RelayRecipient, Initializable {
 
     mapping(uint => Identity) public identities;
 
-    event identityCreated(address identityAddress, address owner, uint identityId);
+    event identityCreated(address identityAddress, address owner, uint identityId, string metadata);
     event identityFactoryCreated(address factoryAddress, address multiSigAddress);
 
     function initialize(MultiSigWalletFactory _multiSig) initializer public {
@@ -26,15 +26,18 @@ contract IdentityFactory is RelayRecipient, Initializable {
         emit identityFactoryCreated(address(this), address(multiSigWalletFactory));
     }
 
-    function createIdentity(address _owner, string calldata _metadata) external {
+    function createIdentity(address _initialOwner, string calldata _metadata) external {
         uint identityId = identityCount.current();
         Identity identity;
         identity = new Identity();
-        identity.initialize2(_owner, multiSigWalletFactory);
+        identity.initialize(address(this));
+        identity.addWhitelistAdmin(_initialOwner);
         identity.addIdMetadata(_metadata);
+        identity.addSocialRecoveryAddress(multiSigWalletFactory);
+        identity.renounceWhitelistAdmin();
         identities[identityId] = identity;
         identityCount.increment();
-        emit identityCreated(address(identity), _owner, identityId);
+        emit identityCreated(address(identity), get_sender(), identityId, _metadata);
     }
 
         /*
