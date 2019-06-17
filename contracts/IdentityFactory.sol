@@ -32,6 +32,7 @@ contract IdentityFactory is RelayRecipient, Initializable {
         identity = new Identity();
         identity.initialize(address(this));
         identity.addWhitelistAdmin(_initialOwner);
+        identity.changeOwner(_initialOwner);
         identity.addIdMetadata(_metadata);
         identity.addSocialRecoveryAddress(multiSigWalletFactory);
         identity.renounceWhitelistAdmin();

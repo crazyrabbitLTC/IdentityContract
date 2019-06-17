@@ -34,9 +34,9 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
     }
 
     function addSocialRecoveryAddress(MultiSigWalletFactory _multiSigWalletFactory) onlyWhitelistAdmin() public {
-        owner = get_sender();
-        //WhitelistAdminRole.initialize(get_sender());
-        //WhitelistAdminRole.addWhitelistAdmin(get_sender());
+        // owner = get_sender();
+        // //WhitelistAdminRole.initialize(get_sender());
+        // //WhitelistAdminRole.addWhitelistAdmin(get_sender());
         multiSigWalletFactory = _multiSigWalletFactory;
     }
 

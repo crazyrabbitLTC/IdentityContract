@@ -6,11 +6,11 @@ const {
   expectRevert
 } = require("openzeppelin-test-helpers");
 
-// Import preferred chai flavor: both expect and should are supported
 const { expect } = require("chai");
 
 const IdentityFactory = artifacts.require("IdentityFactory");
 const MultiSigWalletFactory = artifacts.require("MultiSigWalletFactory");
+const Identity = artifacts.require("Identity");
 
 contract("MultiSigWalletFactory", ([sender, receiver, thirdperson]) => {
   beforeEach(async function() {
@@ -40,5 +40,40 @@ contract("MultiSigWalletFactory", ([sender, receiver, thirdperson]) => {
       owner: sender,
       metadata: metadata
     });
+  });
+});
+
+contract("Identity", ([sender, receiver, thirdperson]) => {
+  const metadata = "Helllooo!!!";
+  let identityAddress = null;
+  this.identity = null;
+  this.registeredOwner = null;
+
+  beforeEach(async function() {
+    this.multiSigWalletFactory = await MultiSigWalletFactory.new();
+    this.identityFactory = await IdentityFactory.new();
+
+    await this.identityFactory.initialize(this.multiSigWalletFactory.address, {
+      from: sender
+    });
+
+    const { logs } = await this.identityFactory.createIdentity(
+      sender,
+      metadata,
+      { from: sender }
+    );
+
+    identityAddress = logs[0].args.identityAddress;
+    registeredOwner = logs[0].args.owner;
+
+    this.identity = await Identity.at(identityAddress);
+    console.log(`The sender: ${sender} the owner: ${registeredOwner}`);
+  });
+
+  it("Expect the identity to belong to sender", async function() {
+    const metadata = "Helllooo!!!";
+    const owner = await this.identity.owner();
+
+    expect(owner).to.be.equal(sender);
   });
 });
