@@ -23,7 +23,7 @@ contract WhitelistAdminRole is Initializable, RelayRecipient {
     }
 
     modifier onlyWhitelistAdmin() {
-        require(isWhitelistAdmin(get_sender()), "The message sender is not an admin");
+        require(isWhitelistAdmin(get_sender()), "The message sender is not an admin.");
         _;
     }
 

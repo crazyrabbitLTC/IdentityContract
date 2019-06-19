@@ -43,7 +43,7 @@ contract("MultiSigWalletFactory", ([sender, receiver, thirdperson]) => {
   });
 });
 
-contract("Identity", ([sender, receiver, thirdperson]) => {
+contract("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
   const metadata = "Helllooo!!!";
   let identityAddress = null;
   this.identity = null;
@@ -76,4 +76,16 @@ contract("Identity", ([sender, receiver, thirdperson]) => {
 
     expect(owner).to.be.equal(sender);
   });
+
+  it("Add additional Address to White list", async function () {
+    const {logs} = await this.identity.addWhitelistAdmin(thirdperson, {from: sender});
+    expectEvent.inLogs(logs, "WhitelistAdminAdded", {
+      account: thirdperson
+    });
+  })
+
+  it("Should not allow unauthorized person to add to whitelist", async function () {
+    await expectRevert(this.identity.addWhitelistAdmin(fourthperson, {from: receiver}), "The message sender is not an admin");
+  })
+  
 });
