@@ -6,5 +6,10 @@
     "IdentityFactory": "IdentityFactory",
     "MultiSigWalletFactory": "MultiSigWalletFactory",
     "Identity": "Identity"
+  },
+  "dependencies": {},
+  "compiler": {
+    "manager": "truffle",
+    "compilerSettings": {}
   }
 }
