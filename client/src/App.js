@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Boiler from "./components/boiler/boiler";
-import CreateUser from "./components/createUser/CreateUser";
+import CreateUserContainer from "./components/createUser/CreateUserContainer";
 import FundMetaMask from "./components/fundMetaMask";
 import { Loader } from "rimble-ui";
 
@@ -207,7 +207,7 @@ const App = () => {
         <h1>Good to Go!</h1>
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
-        <CreateUser {...state} />
+        <CreateUserContainer {...state} />
         <FundMetaMask {...state}/>
       </div>
     );

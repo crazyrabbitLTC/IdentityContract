@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "rimble-ui";
 
-const CreateUser = props => {
+const CreateUserContainer = props => {
   const { network, contracts, appReady, setAppState } = props;
   const { instance, artifacts } = contracts;
   const { web3, accounts, networkId } = network;
@@ -45,4 +45,4 @@ const CreateUser = props => {
   );
 };
 
-export default CreateUser;
+export default CreateUserContainer;
