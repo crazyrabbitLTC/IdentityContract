@@ -1,0 +1,11 @@
+{
+  "zosversion": "2.2",
+  "contracts": {},
+  "dependencies": {},
+  "name": "identity",
+  "version": "0.1.0",
+  "compiler": {
+    "manager": "zos",
+    "compilerSettings": {}
+  }
+}

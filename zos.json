@@ -1,13 +1,12 @@
 {
   "zosversion": "2.2",
-  "name": "Identity",
-  "version": "0.0.1",
   "contracts": {
     "IdentityFactory": "IdentityFactory",
-    "MultiSigWalletFactory": "MultiSigWalletFactory",
-    "Identity": "Identity"
+    "MultiSigWalletFactory": "MultiSigWalletFactory"
   },
   "dependencies": {},
+  "name": "Identity",
+  "version": "0.1.0",
   "compiler": {
     "manager": "truffle",
     "compilerSettings": {}

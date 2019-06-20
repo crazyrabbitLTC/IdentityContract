@@ -24,6 +24,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
     string[] public metadata;
 
     event metaDataAdded(address identity, string metadata);
+    event contractDeployed(address addr, uint256 salt, string contractType);
 
     //Social Recovery
 
@@ -141,5 +142,17 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
         assembly {
             newContract := create(0, add(data, 0x20), mload(data))
         }
+        emit contractDeployed(address(newContract), 0, "create");
+    }
+
+    function executeCreate2(bytes memory code, uint256 salt) internal returns (address newContract) {
+        address addr;
+        assembly {
+            addr := create2(0, add(code, 0x20), mload(code), salt)
+            if iszero(extcodesize(addr)) {
+                revert(0, 0)
+            }
+        }
+        emit contractDeployed(addr, salt, "create2");
     }
 }
