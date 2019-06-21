@@ -25,7 +25,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
     string[] public metadata;
 
     event metaDataAdded(address identity, string metadata);
-
+    event callExecuted(bool success);
     event contractCreated(address contractAddress, uint256 contractType, address creatingContract);
 
 
@@ -133,6 +133,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
         assembly {
             success := call(gas, to, value, add(data, 0x20), mload(data), 0, 0)
         }
+        emit callExecuted(true);
     }
 
     // copied from GnosisSafe

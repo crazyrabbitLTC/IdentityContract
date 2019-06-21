@@ -110,44 +110,45 @@ contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) =>
 
   });
 
-  it("It can deploy a create2 contract and call a function on it", async () => {
-    const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
-    let accountContract;
-    let salt = 1;
+  // it("It can deploy a create2 contract and call a function on it", async () => {
+  //   const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+  //   let accountContract;
+  //   let salt = 1;
 
-    const encodeParam = (dataType, data) => {
-      return web3.eth.abi.encodeParameter(dataType, data)
-    }
-    const bytecode = `${accountBytecode}${encodeParam('address', sender).slice(2)}`
-
-
-    const create2CalculatedAddress = buildCreate2Address(
-      identityAddress,
-      numberToUint256(salt),
-      bytecode
-    );
-
-    const { logs } = await identity.execute(
-      2,
-      sender,
-      0,
-      bytecode,
-      salt,
-      { from: sender }
-    );
-
-    const {contractAddress} = logs;
-
-    const newcontractAddress = logs[0].args.contractAddress;
-
-    accountContract = await AccountContract.at(newcontractAddress);
+  //   const encodeParam = (dataType, data) => {
+  //     return web3.eth.abi.encodeParameter(dataType, data)
+  //   }
+  //   const bytecode = `${accountBytecode}${encodeParam('address', sender).slice(2)}`
 
 
-    expectEvent.inLogs(logs, "contractCreated", {
-      contractAddress: web3.utils.toChecksumAddress(create2CalculatedAddress),
-      contractType: new BN(2)
-    });
+  //   const create2CalculatedAddress = buildCreate2Address(
+  //     identityAddress,
+  //     numberToUint256(salt),
+  //     bytecode
+  //   );
+
+  //   let { logs } = await identity.execute(
+  //     2,
+  //     sender,
+  //     0,
+  //     bytecode,
+  //     salt,
+  //     { from: sender }
+  //   );
+
+  //   const {contractAddress} = logs;
+
+  //   const newcontractAddress = logs[0].args.contractAddress;
+
+  //   accountContract = await AccountContract.at(newcontractAddress);
+
+  //   const result = await identity.execute(0, 0, (encodeParam('setOwner', receiver)) )
+
+  //   console.log("The result: ", result);
+  //   expectEvent.inLogs(logs, "callExecuted", {
+  //     success: true
+  //   });
 
 
-  });
+  // });
 });
