@@ -12,7 +12,7 @@ MetaTransactions: unlike a normal wallet on Ethereum, users can now execute any 
 
 Social Recovery: Each identity can create a social recovery multisig using Gnosis wallet that allows for a predetermined number of signatures to regain control over the identity wallet in the case the Owner looses their private key.
 
-MultiSign: Using Gnosis multisig commans can require either mupltiple parties, or multiple devices to sign off on transactions. This means an action taken on the desktop can be confirmed on mobile. 
+MultiSign: Using Gnosis multisig commands can require either mupltiple parties, or multiple devices to sign off on transactions. This means an action taken on the desktop can be confirmed on mobile. 
 
 OpenZeppelin Roles: Used to manage who can acces functions in a way that is already known to be secure. 
 
