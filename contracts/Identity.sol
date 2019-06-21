@@ -14,6 +14,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     uint256 constant OPERATION_CALL = 0;
     uint256 constant OPERATION_CREATE = 1;
+    uint256 constant OPERATION_CREATE2 = 2;
 
     MultiSigWalletFactory multiSigWalletFactory;
 
@@ -24,7 +25,9 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
     string[] public metadata;
 
     event metaDataAdded(address identity, string metadata);
-    event contractDeployed(address addr, uint256 salt, string contractType);
+
+    event contractCreated(address contractAddress, uint256 contractType);
+
 
     //Social Recovery
 
@@ -105,15 +108,15 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
         emit DataChanged(_key, _value);
     }
 
-    function execute(uint256 _operationType, address _to, uint256 _value, bytes calldata _data)
-        external
-        onlyWhitelistAdmin()
-    {
+    function execute(uint256 _operationType, address _to, uint256 _value, bytes calldata _data, uint256 salt) external onlyWhitelistAdmin(){
         if (_operationType == OPERATION_CALL) {
             executeCall(_to, _value, _data);
         } else if (_operationType == OPERATION_CREATE) {
             address newContract = executeCreate(_data);
-            emit ContractCreated(newContract);
+            emit contractCreated(newContract, OPERATION_CREATE);
+        } else if (_operationType == OPERATION_CREATE2){
+            address newContract = executeCreate2(_data, salt);
+            emit contractCreated(newContract, OPERATION_CREATE2);
         } else {
             // We don't want to spend users gas if parametar is wrong
             revert();
@@ -142,7 +145,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
         assembly {
             newContract := create(0, add(data, 0x20), mload(data))
         }
-        emit contractDeployed(address(newContract), 0, "create");
+        // emit contractDeployed(address(newContract), 0, "create");
     }
 
     function executeCreate2(bytes memory code, uint256 salt) internal returns (address newContract) {
@@ -153,6 +156,6 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
                 revert(0, 0)
             }
         }
-        emit contractDeployed(addr, salt, "create2");
+        return addr;
     }
 }
