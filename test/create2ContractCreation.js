@@ -13,142 +13,149 @@ const MultiSigWalletFactory = artifacts.require("MultiSigWalletFactory");
 const Identity = artifacts.require("Identity");
 const AccountContract = artifacts.require("Account");
 
-contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) => {
-  let identity = null;
-  const buildCreate2Address = (creatorAddress, saltHex, byteCode) => {
-    return `0x${web3.utils
-      .sha3(
-        `0x${["ff", creatorAddress, saltHex, web3.utils.sha3(byteCode)]
-          .map(x => x.toString().replace(/0x/, ""))
-          .join("")}`
-      )
-      .slice(-40)}`.toLowerCase();
-  };
+contract(
+  "Identity: Create2",
+  ([sender, receiver, thirdperson, fourthperson]) => {
+    let identity = null;
+    const buildCreate2Address = (creatorAddress, saltHex, byteCode) => {
+      return `0x${web3.utils
+        .sha3(
+          `0x${["ff", creatorAddress, saltHex, web3.utils.sha3(byteCode)]
+            .map(x => x.toString().replace(/0x/, ""))
+            .join("")}`
+        )
+        .slice(-40)}`.toLowerCase();
+    };
 
-  // converts an int to uint256
-  function numberToUint256(value) {
-    const hex = value.toString(16);
-    return `0x${"0".repeat(64 - hex.length)}${hex}`;
-  }
+    // converts an int to uint256
+    function numberToUint256(value) {
+      const hex = value.toString(16);
+      return `0x${"0".repeat(64 - hex.length)}${hex}`;
+    }
 
-  // encodes parameter to pass as contract argument
-  function encodeParam(dataType, data) {
-    return web3.eth.abi.encodeParameter(dataType, data);
-  }
+    // encodes parameter to pass as contract argument
+    function encodeParam(dataType, data) {
+      return web3.eth.abi.encodeParameter(dataType, data);
+    }
 
-  // returns true if contract is deployed on-chain
-  async function isContract(address) {
-    const code = await web3.eth.getCode(address);
-    return code.slice(2).length > 0;
-  }
+    // returns true if contract is deployed on-chain
+    async function isContract(address) {
+      const code = await web3.eth.getCode(address);
+      return code.slice(2).length > 0;
+    }
 
-  beforeEach(async function() {
-    this.multiSigWalletFactory = await MultiSigWalletFactory.new();
-    this.identityFactory = await IdentityFactory.new();
+    beforeEach(async function() {
+      this.multiSigWalletFactory = await MultiSigWalletFactory.new();
+      this.identityFactory = await IdentityFactory.new();
 
-    await this.identityFactory.initialize(this.multiSigWalletFactory.address, {
-      from: sender
+      await this.identityFactory.initialize(
+        this.multiSigWalletFactory.address,
+        {
+          from: sender
+        }
+      );
+
+      const { logs } = await this.identityFactory.createIdentity(
+        sender,
+        "Hello Metadata",
+        { from: sender }
+      );
+
+      identityAddress = logs[0].args.identityAddress;
+      registeredOwner = logs[0].args.owner;
+
+      identity = await Identity.at(identityAddress);
     });
 
-    const { logs } = await this.identityFactory.createIdentity(
-      sender,
-      "Hello Metadata",
-      { from: sender }
-    );
+    it("Deployed a create2 contract", async () => {
+      const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
 
-    identityAddress = logs[0].args.identityAddress;
-    registeredOwner = logs[0].args.owner;
+      let salt = 1;
 
-    identity = await Identity.at(identityAddress);
-  });
+      const create2CalculatedAddress = buildCreate2Address(
+        identityAddress,
+        numberToUint256(salt),
+        accountBytecode
+      );
 
-  it("Deployed a create2 contract", async () => {
-    const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+      const { logs } = await identity.execute(
+        2,
+        sender,
+        0,
+        accountBytecode,
+        salt,
+        { from: sender }
+      );
 
-    let salt = 1;
-
-    const create2CalculatedAddress = buildCreate2Address(
-      identityAddress,
-      numberToUint256(salt),
-      accountBytecode
-    );
-
-    const { logs } = await identity.execute(
-      2,
-      sender,
-      0,
-      accountBytecode,
-      salt,
-      { from: sender }
-    );
-
-    expectEvent.inLogs(logs, "contractCreated", {
-      contractAddress: web3.utils.toChecksumAddress(create2CalculatedAddress),
-      contractType: new BN(2)
+      expectEvent.inLogs(logs, "contractCreated", {
+        contractAddress: web3.utils.toChecksumAddress(create2CalculatedAddress),
+        contractType: new BN(2)
+      });
     });
-  });
 
-  it("Should not deploy a create2 contract if the sender is not whitelisted", async () => {
-    const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+    it("Should not deploy a create2 contract if the sender is not whitelisted", async () => {
+      const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
 
-    let salt = 1;
+      let salt = 1;
 
-    const create2CalculatedAddress = buildCreate2Address(
-      identityAddress,
-      numberToUint256(salt),
-      accountBytecode
-    );
+      const create2CalculatedAddress = buildCreate2Address(
+        identityAddress,
+        numberToUint256(salt),
+        accountBytecode
+      );
 
-    await expectRevert(identity.execute(
-      2,
-      sender,
-      0,
-      accountBytecode,
-      salt,
-      { from: thirdperson }
-    ), "The message sender is not an admin");
+      await expectRevert(
+        identity.execute(2, sender, 0, accountBytecode, salt, {
+          from: thirdperson
+        }),
+        "The message sender is not an admin"
+      );
+    });
 
-  });
+    it("It can deploy a create2 contract and call a function on it", async () => {
+      const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+      let accountContract;
+      let salt = 1;
 
-  // it("It can deploy a create2 contract and call a function on it", async () => {
-  //   const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
-  //   let accountContract;
-  //   let salt = 1;
+      function getEncodedCall(instance, method, params = []) {
+        const contract = new web3.eth.Contract(instance.abi);
+        return contract.methods[method](...params).encodeABI();
+      }
 
-  //   const encodeParam = (dataType, data) => {
-  //     return web3.eth.abi.encodeParameter(dataType, data)
-  //   }
-  //   const bytecode = `${accountBytecode}${encodeParam('address', sender).slice(2)}`
+      const encodeParam = (dataType, data) => {
+        return web3.eth.abi.encodeParameter(dataType, data);
+      };
+      const bytecode = `${accountBytecode}${encodeParam(
+        "address",
+        sender
+      ).slice(2)}`;
 
+      let { logs } = await identity.execute(2, sender, 0, bytecode, salt, {
+        from: sender
+      });
 
-  //   const create2CalculatedAddress = buildCreate2Address(
-  //     identityAddress,
-  //     numberToUint256(salt),
-  //     bytecode
-  //   );
+      const { contractAddress } = logs;
 
-  //   let { logs } = await identity.execute(
-  //     2,
-  //     sender,
-  //     0,
-  //     bytecode,
-  //     salt,
-  //     { from: sender }
-  //   );
+      const newcontractAddress = logs[0].args.contractAddress;
 
-  //   const {contractAddress} = logs;
+      accountContract = await AccountContract.at(newcontractAddress);
 
-  //   const newcontractAddress = logs[0].args.contractAddress;
+      const encodedCall = getEncodedCall(accountContract, "setOwner", [
+        receiver
+      ]);
 
-  //   accountContract = await AccountContract.at(newcontractAddress);
+      const result = await identity.execute(
+        0,
+        accountContract.address,
+        0,
+        encodedCall,
+        0,
+        { from: sender }
+      );
 
-  //   const result = await identity.execute(0, 0, (encodeParam('setOwner', receiver)) )
-
-  //   console.log("The result: ", result);
-  //   expectEvent.inLogs(logs, "callExecuted", {
-  //     success: true
-  //   });
-
-
-  // });
-});
+      expectEvent.inLogs(result.logs, "callExecuted", {
+        success: true
+      });
+    });
+  }
+);
