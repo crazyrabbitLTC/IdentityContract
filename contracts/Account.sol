@@ -9,16 +9,16 @@ contract Account {
   }
 
   function setOwner(address _owner) public {
-    require(msg.sender == owner);
+    require(msg.sender == owner, "Message Sender is not Owner");
     address oldOwner = owner;
     owner = _owner;
     emit accountOwnerchanged(oldOwner, _owner);
   }
 
   function destroy(address payable recipient) public {
-    require(msg.sender == owner);
+    require(msg.sender == owner, "Message Sender is not Owner");
     selfdestruct(recipient);
   }
 
-  function() payable external {}
+  function() external payable  {}
 }

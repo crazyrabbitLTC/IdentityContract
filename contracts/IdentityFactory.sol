@@ -20,7 +20,7 @@ contract IdentityFactory is RelayRecipient, Initializable {
     event identityCreated(address identityAddress, address owner, uint identityId, string metadata);
     event identityFactoryCreated(address factoryAddress, address multiSigAddress);
 
-    function initialize(MultiSigWalletFactory _multiSig) initializer public {
+    function initialize(MultiSigWalletFactory _multiSig) public initializer  {
         multiSigWalletFactory = _multiSig;
         contractInitialized = true;
         emit identityFactoryCreated(address(this), address(multiSigWalletFactory));
@@ -45,7 +45,7 @@ contract IdentityFactory is RelayRecipient, Initializable {
     @GSN FUNCTIONS
     */
     function accept_relayed_call(address /*relay*/, address /*from*/,
-        bytes memory /*encoded_function*/, uint /*gas_price*/, 
+    bytes memory /*encoded_function*/, uint /*gas_price*/,
         uint /*transaction_fee*/ ) public view returns(uint32) {
     return 0; // accept everything.
     }
@@ -54,6 +54,7 @@ contract IdentityFactory is RelayRecipient, Initializable {
     function post_relayed_call(address /*relay*/, address /*from*/,
         bytes memory /*encoded_function*/, bool /*success*/,
         uint /*used_gas*/, uint /*transaction_fee*/ ) public {
+            //Do nothing for now.
     }
 
     function init_hub(RelayHub hub_addr) public {

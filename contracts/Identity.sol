@@ -37,7 +37,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     }
 
-    function addSocialRecoveryAddress(MultiSigWalletFactory _multiSigWalletFactory) onlyWhitelistAdmin() public {
+    function addSocialRecoveryAddress(MultiSigWalletFactory _multiSigWalletFactory) public onlyWhitelistAdmin() {
         // owner = get_sender();
         // //WhitelistAdminRole.initialize(get_sender());
         // //WhitelistAdminRole.addWhitelistAdmin(get_sender());
@@ -62,7 +62,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
     @ GSN FUNCTIONS
     */
     function accept_relayed_call(address /*relay*/, address /*from*/,
-        bytes memory /*encoded_function*/, uint /*gas_price*/, 
+        bytes memory /*encoded_function*/, uint /*gas_price*/,
         uint /*transaction_fee*/ ) public view returns(uint32) {
         return 0; // accept everything.
     }
@@ -119,7 +119,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
             emit contractCreated(newContract, OPERATION_CREATE2, address(this));
         } else {
             // We don't want to spend users gas if parametar is wrong
-            revert();
+            revert("Inccorect operation type");
         }
     }
 
