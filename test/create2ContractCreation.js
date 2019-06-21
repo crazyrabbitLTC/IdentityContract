@@ -62,7 +62,7 @@ contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) =>
     identity = await Identity.at(identityAddress);
   });
 
-  it("Deployed a Create2 contract", async () => {
+  it("Deployed a create2 contract", async () => {
     const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
 
     let salt = 1;
@@ -88,8 +88,6 @@ contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) =>
     });
   });
 
-
-
   it("Should not deploy a create2 contract if the sender is not whitelisted", async () => {
     const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
 
@@ -109,6 +107,47 @@ contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) =>
       salt,
       { from: thirdperson }
     ), "The message sender is not an admin");
+
+  });
+
+  it("It can deploy a create2 contract and call a function on it", async () => {
+    const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+    let accountContract;
+    let salt = 1;
+
+    const encodeParam = (dataType, data) => {
+      return web3.eth.abi.encodeParameter(dataType, data)
+    }
+    const bytecode = `${accountBytecode}${encodeParam('address', sender).slice(2)}`
+
+
+    const create2CalculatedAddress = buildCreate2Address(
+      identityAddress,
+      numberToUint256(salt),
+      bytecode
+    );
+
+    const { logs } = await identity.execute(
+      2,
+      sender,
+      0,
+      bytecode,
+      salt,
+      { from: sender }
+    );
+
+    const {contractAddress} = logs;
+
+    const newcontractAddress = logs[0].args.contractAddress;
+
+    accountContract = await AccountContract.at(newcontractAddress);
+
+
+    expectEvent.inLogs(logs, "contractCreated", {
+      contractAddress: web3.utils.toChecksumAddress(create2CalculatedAddress),
+      contractType: new BN(2)
+    });
+
 
   });
 });
