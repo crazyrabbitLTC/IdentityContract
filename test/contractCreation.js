@@ -13,7 +13,7 @@ const MultiSigWalletFactory = artifacts.require("MultiSigWalletFactory");
 const Identity = artifacts.require("Identity");
 const AccountContract = artifacts.require("Account");
 
-contract("Create2", ([sender, receiver, thirdperson, fourthperson]) => {
+contract("Identity: Create2", ([sender, receiver, thirdperson, fourthperson]) => {
   let identity = null;
   const buildCreate2Address = (creatorAddress, saltHex, byteCode) => {
     return `0x${web3.utils
@@ -86,5 +86,29 @@ contract("Create2", ([sender, receiver, thirdperson, fourthperson]) => {
       contractAddress: web3.utils.toChecksumAddress(create2CalculatedAddress),
       contractType: new BN(2)
     });
+  });
+
+
+
+  it("Should not deploy a create2 contract if the sender is not whitelisted", async () => {
+    const { abi: accountAbi, bytecode: accountBytecode } = AccountContract;
+
+    let salt = 1;
+
+    const create2CalculatedAddress = buildCreate2Address(
+      identityAddress,
+      numberToUint256(salt),
+      accountBytecode
+    );
+
+    await expectRevert(identity.execute(
+      2,
+      sender,
+      0,
+      accountBytecode,
+      salt,
+      { from: thirdperson }
+    ), "The message sender is not an admin");
+
   });
 });
