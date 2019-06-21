@@ -60,7 +60,8 @@ contract("Create2", ([sender, receiver, thirdperson, fourthperson]) => {
     registeredOwner = logs[0].args.owner;
 
     identity = await Identity.at(identityAddress);
-    console.log(`The sender: ${sender} the owner: ${registeredOwner}`);
+    console.log("The created Identity Address: ", identityAddress);
+    //console.log(`The sender: ${sender} the owner: ${registeredOwner}`);
   });
 
   it("Deployed a Create2 contract", async () => {
@@ -69,12 +70,19 @@ contract("Create2", ([sender, receiver, thirdperson, fourthperson]) => {
     //require("../build/contracts/Account.json");
 
     let salt = 1;
-    let address = identityAddress;
+
     const create2CalculatedAddress = buildCreate2Address(
-      address,
-      salt,
+      identityAddress,
+      numberToUint256(salt),
       accountBytecode
     );
+
+    // const computedAddr = buildCreate2Address(
+    //   factoryAddress,
+    //   numberToUint256(salt),
+    //   bytecode
+    // )
+  
     console.log("The create2CalculatedAddress is: ", create2CalculatedAddress);
     //const bytecode = `${accountBytecode}${encodeParam('address', '0x303de46de694cc75a2f66da93ac86c6a6eee607e').slice(2)}`
     //console.log(identity.methods);
@@ -89,7 +97,11 @@ contract("Create2", ([sender, receiver, thirdperson, fourthperson]) => {
       { from: sender }
     );
 
-    console.log("If it worked, here are the logs: ", logs);
+    //console.log("If it worked, here are the logs: ", logs);
+    expectEvent.inLogs(logs, "contractCreated", {
+      contractAddress: create2CalculatedAddress,
+      contractType: 2
+    });
   });
 });
 

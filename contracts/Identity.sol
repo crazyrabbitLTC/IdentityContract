@@ -26,7 +26,7 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
 
     event metaDataAdded(address identity, string metadata);
 
-    event contractCreated(address contractAddress, uint256 contractType);
+    event contractCreated(address contractAddress, uint256 contractType, address creatingContract);
 
 
     //Social Recovery
@@ -113,10 +113,10 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
             executeCall(_to, _value, _data);
         } else if (_operationType == OPERATION_CREATE) {
             address newContract = executeCreate(_data);
-            emit contractCreated(newContract, OPERATION_CREATE);
+            emit contractCreated(newContract, OPERATION_CREATE, address(this));
         } else if (_operationType == OPERATION_CREATE2){
             address newContract = executeCreate2(_data, salt);
-            emit contractCreated(newContract, OPERATION_CREATE2);
+            emit contractCreated(newContract, OPERATION_CREATE2, address(this));
         } else {
             // We don't want to spend users gas if parametar is wrong
             revert();
@@ -145,17 +145,19 @@ contract Identity is ERC725, WhitelistAdminRole, WhitelistedRole {
         assembly {
             newContract := create(0, add(data, 0x20), mload(data))
         }
-        // emit contractDeployed(address(newContract), 0, "create");
+
+        return newContract;
     }
 
+    //copied from: https://github.com/miguelmota/solidity-create2-example/blob/master/test/test.js
     function executeCreate2(bytes memory code, uint256 salt) internal returns (address newContract) {
-        address addr;
+        // solium-disable-next-line security/no-inline-assembly
         assembly {
-            addr := create2(0, add(code, 0x20), mload(code), salt)
-            if iszero(extcodesize(addr)) {
+            newContract := create2(0, add(code, 0x20), mload(code), salt)
+            if iszero(extcodesize(newContract)) {
                 revert(0, 0)
             }
         }
-        return addr;
+        return newContract;
     }
 }
