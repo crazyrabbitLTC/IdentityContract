@@ -1,4 +1,4 @@
-What: 
+#What: 
 
 Identity is system for deploying ideneity contracts based on ERC725, that can execute arbitrary code, deploy contracts (Both create and create2), supports MetaTransactions via the Gas Stations network, Arbitray MetaData can be assigned to the Identity, Multiple authorized users, and Social recovery (or multisignature) via Gnosis Multisig. 
 
@@ -20,7 +20,7 @@ OpenZeppelin-Test-helpers: Used to dramatically simplify the testing process.
 
 MetaData: Arbitrary metadata can be associated with the Identity account. This means that Identities can attach documentation, ID's, medical records, personal schedules of assets, etc... to identities. A museum for example, could create an Identity that represents itself, along with MetaData that represents their collection. 
 
-Why: 
+#Why: 
 
 In a number of my own personal and profesional projects I have discovered the need for an "identity" on the blockchian that can own tokens, make contract calls, represent not just an inidividual but also an organization. Additionally, user onboarding continues to be a pain and MetaTxns works to solve this. This project is a collection of useful opensource technologies already availible, to build something that fit my, and hopefully others, needs. 
 
@@ -32,7 +32,7 @@ In the future, I would imagine adding additional features. For now, I am looking
 
 Ideally I would like to build a Nodejs library that allows users to use Identities without needing to go through the process of building transactions, understanding function signatures, etc...
 
-To Test:
+#To Test:
 
 First start up an instance of Ganache:
 
@@ -42,7 +42,7 @@ then run your tests:
 
 `truffle test`
 
-To run: 
+#To run: 
 
 `zos push`
 
