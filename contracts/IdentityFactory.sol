@@ -26,7 +26,7 @@ contract IdentityFactory is Initializable, GSN {
         emit identityFactoryCreated(address(this), address(multiSigWalletFactory));
     }
 
-    function createIdentity(address _initialOwner, string calldata _metadata) external {
+    function createIdentity(address _initialOwner, string calldata _metadata, address _refundAddress) external {
         uint identityId = identityCount.current();
         Identity identity;
         identity = new Identity();

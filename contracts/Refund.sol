@@ -12,7 +12,9 @@ contract Refund is WhitelistAdminRole, WhitelistedRole {
     event refund(address recipient, uint amount);
     function refundCreator(address _refundAddress) public onlyWhitelistAdmin() {
         require((!refunded), "Contract has already been refunded");
-        _refundAddress.transfer(refundAmount);
-        emit refund(_refundAddress, refundAmount);
+        if(_refundAddress != address(0x0000000000000000000000000000000000000000)){
+            _refundAddress.transfer(refundAmount);
+            emit refund(_refundAddress, refundAmount);
+        }
     }
 }
