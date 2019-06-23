@@ -114,4 +114,15 @@ contract("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
 
     expect(result).to.equal(metadata);
   });
+
+  it("Should be able to retrieve metadata count", async function() {
+    const number = new BN(2);
+    const metadata = "This is my metadata";
+    await this.identity.addIdMetadata(metadata, {
+      from: sender
+    });
+    const result = await this.identity.getTotalMetadata();
+
+    expect(result.toString()).to.equal(number.toString());
+  });
 });
