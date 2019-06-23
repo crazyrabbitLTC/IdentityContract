@@ -98,7 +98,7 @@ contract("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
     const { logs } = await this.identity.addIdMetadata(metadata, {
       from: sender
     });
-    expectEvent.inLogs(logs, "metaDataAdded", {
+    expectEvent.inLogs(logs, "metadataAdded", {
       identity: this.identity.address,
       metadata: metadata
     });

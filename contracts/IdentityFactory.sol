@@ -3,11 +3,11 @@ pragma solidity ^0.5.4;
 import "./Identity.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
 import "zos-lib/contracts/Initializable.sol";
-import "tabookey-gasless/contracts/RelayRecipient.sol";
 import "contracts/GnosisMultiSig/MultiSigWalletFactory.sol";
+import "./GSN.sol";
 
 
-contract IdentityFactory is RelayRecipient, Initializable {
+contract IdentityFactory is Initializable, GSN {
 
     using Counters for Counters.Counter;
     Counters.Counter public identityCount;
@@ -40,27 +40,6 @@ contract IdentityFactory is RelayRecipient, Initializable {
         identityCount.increment();
         emit identityCreated(address(identity), get_sender(), identityId, _metadata);
     }
-
-        /*
-    @GSN FUNCTIONS
-    */
-    function accept_relayed_call(address /*relay*/, address /*from*/,
-    bytes memory /*encoded_function*/, uint /*gas_price*/,
-        uint /*transaction_fee*/ ) public view returns(uint32) {
-    return 0; // accept everything.
-    }
-    // nothing to be done post-call.
-    // still, we must implement this method.
-    function post_relayed_call(address /*relay*/, address /*from*/,
-        bytes memory /*encoded_function*/, bool /*success*/,
-        uint /*used_gas*/, uint /*transaction_fee*/ ) public {
-            //Do nothing for now.
-    }
-
-    function init_hub(RelayHub hub_addr) public {
-    init_relay_hub(hub_addr);
-    }
-
 
 
 
