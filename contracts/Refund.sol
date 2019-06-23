@@ -16,5 +16,6 @@ contract Refund is WhitelistAdminRole, WhitelistedRole {
             _refundAddress.transfer(refundAmount);
             emit refund(_refundAddress, refundAmount);
         }
+        refunded = true;
     }
 }
