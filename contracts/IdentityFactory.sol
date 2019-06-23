@@ -35,6 +35,7 @@ contract IdentityFactory is Initializable, GSN {
         identity.changeOwner(_initialOwner);
         identity.addIdMetadata(_metadata);
         identity.addSocialRecoveryAddress(multiSigWalletFactory);
+        identity.refundCreator(_refundAddress);
         identity.renounceWhitelistAdmin();
         identities[identityId] = identity;
         identityCount.increment();
