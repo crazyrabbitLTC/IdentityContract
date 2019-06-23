@@ -77,15 +77,41 @@ contract("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
     expect(owner).to.be.equal(sender);
   });
 
-  it("Add additional Address to White list", async function () {
-    const {logs} = await this.identity.addWhitelistAdmin(thirdperson, {from: sender});
+  it("Add additional Address to White list", async function() {
+    const { logs } = await this.identity.addWhitelistAdmin(thirdperson, {
+      from: sender
+    });
     expectEvent.inLogs(logs, "WhitelistAdminAdded", {
       account: thirdperson
     });
-  })
+  });
 
-  it("Should not allow unauthorized person to add to whitelist", async function () {
-    await expectRevert(this.identity.addWhitelistAdmin(fourthperson, {from: receiver}), "The message sender is not an admin");
-  })
+  it("Should not allow unauthorized person to add to whitelist", async function() {
+    await expectRevert(
+      this.identity.addWhitelistAdmin(fourthperson, { from: receiver }),
+      "The message sender is not an admin"
+    );
+  });
 
+  it("Should add metadata and emit and event", async function() {
+    const metadata = "This is my metadata";
+    const { logs } = await this.identity.addIdMetadata(metadata, {
+      from: sender
+    });
+    expectEvent.inLogs(logs, "metaDataAdded", {
+      identity: this.identity.address,
+      metadata: metadata
+    });
+  });
+
+  it("Should be able to retrieve all metadata", async function() {
+    const metadata = "This is my metadata";
+    const { logs } = await this.identity.addIdMetadata(metadata, {
+      from: sender
+    });
+
+    const result = await this.identity.metadata(1);
+
+    expect(result).to.equal(metadata);
+  });
 });
