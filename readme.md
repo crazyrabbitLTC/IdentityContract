@@ -26,21 +26,21 @@ Identity is system for deploying ideneity contracts based on ERC725, that can ex
 
 When an Identity is created, this identity can be used to own ETH, Tokens, and represent a user, organization or individual on Ethereum, with all the power that a typical user would normally have, but with a number of additional advatages. 
 
-*ERC725*: Being ERC725 compatible means that it conforms to the specification. 
+_ERC725_: Being ERC725 compatible means that it conforms to the specification. 
 
-*ZeppelinOS*: The identity factory and MultiSigWallet factories are upgradable by nature, meaning they can make newer types of identities or factories. Currently these factories create non-upgradable contracts, so for the moment the contracts they create are immutable. 
+_ZeppelinOS_: The identity factory and MultiSigWallet factories are upgradable by nature, meaning they can make newer types of identities or factories. Currently these factories create non-upgradable contracts, so for the moment the contracts they create are immutable. 
 
-*MetaTransactions*: unlike a normal wallet on Ethereum, users can now execute any transaction without needing to own or hold ETH.
+_MetaTransactions_: unlike a normal wallet on Ethereum, users can now execute any transaction without needing to own or hold ETH.
 
-*Social Recovery*: Each identity can create a social recovery multisig using Gnosis wallet that allows for a predetermined number of signatures to regain control over the identity wallet in the case the Owner looses their private key.
+_Social Recovery_: Each identity can create a social recovery multisig using Gnosis wallet that allows for a predetermined number of signatures to regain control over the identity wallet in the case the Owner looses their private key.
 
-*MultiSign*: Using Gnosis multisig commands can require either mupltiple parties, or multiple devices to sign off on transactions. This means an action taken on the desktop can be confirmed on mobile. 
+_MultiSign_: Using Gnosis multisig commands can require either mupltiple parties, or multiple devices to sign off on transactions. This means an action taken on the desktop can be confirmed on mobile. 
 
-*OpenZeppelin Roles*: Used to manage who can acces functions in a way that is already known to be secure. 
+_OpenZeppelin Roles_: Used to manage who can acces functions in a way that is already known to be secure. 
 
-*OpenZeppelin-Test-helpers*: Used to dramatically simplify the testing process. 
+_OpenZeppelin-Test-helpers_: Used to dramatically simplify the testing process. 
 
-*MetaData*: Arbitrary metadata can be associated with the Identity account. This means that Identities can attach documentation, ID's, medical records, personal schedules of assets, etc... to identities. A museum for example, could create an Identity that represents itself, along with MetaData that represents their collection. 
+__MetaData_: Arbitrary metadata can be associated with the Identity account. This means that Identities can attach documentation, ID's, medical records, personal schedules of assets, etc... to identities. A museum for example, could create an Identity that represents itself, along with MetaData that represents their collection. 
 
 # Why: 
 
@@ -52,7 +52,7 @@ Ideally I would like to build a Nodejs library that allows users to use Identiti
 
 *Identity* is built using [ZeppelinOS](https://zeppelinos.org/). This gives the flexibility for building in upgradable contracts and in the future, creating [EVM packages](https://docs.zeppelinos.org/docs/publishing.html) of the resulting code. This means significant gas savings for deployment and the option for users to accept (or reject) upgradable instances. 
 
-## To start, install ZeppelinOS
+## To start, install ZeppelinOS. You will prefer version 2.4 and higher.
 
 `npm install -g zos`
 
@@ -64,10 +64,42 @@ Ideally I would like to build a Nodejs library that allows users to use Identiti
 
 `npm install`
 
+## Run a local development blockchain
+
+`npm install -g ganache-cli`
+
+`ganache-cli --deterministic`
+
+## First create an instance of the Gnosis `MultiSigWalletFactory.sol`
+
+`zos create MultiSigWalletFactory`
+
+Take note of the address the `zos` cli returns, you will need this for the next step. 
+You are free to use any MultiSigWalletFactory as long as it conforms to the _Gnosis_ contract interface. 
+
+## Create an instance of the `IdentityFactory.sol` contract
+
+`zos create IdentityFactory`
+
+Follow the cli prompts. It will ask you if you want to run a function, select yes, 
+then select `initialize()` as the function you wish to run. Pass the address of the 
+previously created `MultiSigWalletFactory` as the arguement. 
+
+## Your Identity factory is now ready. To create an identity: 
+
+`zos send-tx`
+
+This will prompt you to select the function you want to send a transaction to. 
+
+Select, `createIdentity(address _initialOwner, string calldata _metadata)` and pass
+the address of the identities initial owner and a string for the metadata. 
+
+Success! You now have a first-class citizen Identity contract!
+
+(I will update with more tutorial soon)
 
 
-
-# To Test:
+## To Test:
 
 First start up an instance of Ganache:
 
@@ -77,23 +109,12 @@ then run your tests:
 
 `truffle test`
 
-# To run: 
+## Notes: 
 
-`zos push`
+This project is MIT licensed. Open source for the win!
 
-`zos create MultiSigWalletFactory`
+I am currently looking for individuals to participate in growing this project as well as funding to potentially hire developers as well. Please feel free to reach me either at: 
 
-Save the address this returns, it is needed to initialize the Identity Factory.
-
-`zos create IdentityFactory`
-
-Follow the prompts, when it asks you if you want to call a function select yes, and choose the `initialize` function. Pass the address of the `MultiSigWalletFactory` as the argument. 
-
-Your Identity factory should now be ready, to create an identity you need to send-tx to: `createIdentity(address _initialOwner, string calldata _metadata)` passing the address of the `_initialOwner` and `_metadata` for the identity. 
-
-The scripts in the `test` folder can give more ideas how to interact with created identity. 
-
-
-
+dennison@dennisonbertram.com
 
 
