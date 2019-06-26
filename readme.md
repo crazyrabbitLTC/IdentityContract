@@ -1,3 +1,13 @@
+# Identity: 
+
+When using Ethereum, we primarilly think of our walllet as being our public-private keypair. This is how we normally interact on the blockchain, we sign transactions with our private key. This has a number of drawbacks- users need to be extremely careful with their keys, there is no backup incase of loss, and when users are indentified by their public key- losing the corresponding private key means losing ones identity completely. 
+
+## The idea: 
+
+The idea behind Identity is to create a contract which can represent a user, an organization, an agent, anything- but rather than have this identity be tied to a singular key pair, it can be tied to a contract which can exceute arbitrary code, and thus interact like a first-class citizen on Ethereum. 
+
+
+
 # What: 
 
 Identity is system for deploying ideneity contracts based on ERC725, that can execute arbitrary code, deploy contracts (Both create and create2), supports MetaTransactions via the Gas Stations network, Arbitray MetaData can be assigned to the Identity, Multiple authorized users, and Social recovery (or multisignature) via Gnosis Multisig. 
