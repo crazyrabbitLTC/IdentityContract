@@ -40,7 +40,7 @@ _OpenZeppelin Roles_: Used to manage who can acces functions in a way that is al
 
 _OpenZeppelin-Test-helpers_: Used to dramatically simplify the testing process. 
 
-__MetaData_: Arbitrary metadata can be associated with the Identity account. This means that Identities can attach documentation, ID's, medical records, personal schedules of assets, etc... to identities. A museum for example, could create an Identity that represents itself, along with MetaData that represents their collection. 
+_MetaData_: Arbitrary metadata can be associated with the Identity account. This means that Identities can attach documentation, ID's, medical records, personal schedules of assets, etc... to identities. A museum for example, could create an Identity that represents itself, along with MetaData that represents their collection. 
 
 # Why: 
 
