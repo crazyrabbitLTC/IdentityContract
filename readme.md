@@ -6,7 +6,19 @@ When using Ethereum, we primarilly think of our walllet as being our public-priv
 
 The idea behind Identity is to create a contract which can represent a user, an organization, an agent, anything- but rather than have this identity be tied to a singular key pair, it can be tied to a contract which can exceute arbitrary code, and thus interact like a first-class citizen on Ethereum. 
 
+When thinking about Identiy the following things were part of the wish list: 
 
+1. Meta transaction support: this means users can start using ethereum without haveing ethereum, and without having a wallet, nor owning any ETH for gas. 
+
+2. First Class citizen: users can send transactions and create contracts, including using the new `create2` opcode.
+
+3. Social Recovery: users can create multi-sigs collections of keypairs that are allowed to regain access to their account. 
+
+4. Permission system: users can allow multiple addreses, or via multi-sig, groups of addresses to control the wallet. This means DApp developers can implement features such as 2FA for transactions. 
+
+5. Arbitrary Metadata: Identities should be able to pin meta-data to themselves. This might be encrypted personal records in the case of individuals, it might be public finacial statements in the case of a non-profit. If the indetity is supposed to represent an agent, there should be the ability to attach additional metadata. 
+
+6. Standards compliant: An identity should play nice with other existing standards in Ethereum.
 
 # What: 
 
