@@ -240,7 +240,6 @@ const App = () => {
   };
 
   if (!state.network.web3) {
-    console.log("NOt rendering", state);
     return renderLoader();
   } else {
     return renderPage();

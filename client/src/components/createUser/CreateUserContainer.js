@@ -24,11 +24,11 @@ const CreateUserContainer = props => {
   const createIdentity = async formData => {
     
     const data = JSON.stringify(formData);
-    console.log("Form data is: ", data);
+
     setStatus({ fetching: true });
 
     let tx = null;
-    console.log("ONE")
+
     try {
       tx = await factory
       .createIdentity(accounts[0], data)
@@ -36,8 +36,7 @@ const CreateUserContainer = props => {
     } catch (error) {
       console.log("Create Identity Failed, error was: ", error);
     }
-    console.log("two")
-    console.log("TransactionHash: ", tx);
+
 
     let events = tx.events.identityCreated.returnValues;
     let {
@@ -49,7 +48,7 @@ const CreateUserContainer = props => {
 
     metadata = JSON.parse(metadata);
 
-    console.log(events);
+    //console.log(events);
     setStatus({
       fetching: false,
       identityAddress,
