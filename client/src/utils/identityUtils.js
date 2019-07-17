@@ -33,8 +33,8 @@ class Identity {
   }
 
   async setKeyData(key, data, accounts) {
-    let tx;
-    let events;
+    let tx = null;
+    let events = null;
     try {
         tx = await this.instance.setData(key, data).send({ from: accounts[0]});
         events = tx.events.DataChanged.returnValues;
@@ -56,11 +56,11 @@ class Identity {
       return data;
   }
 
-  async getMetadataById(id){
+  async getMetadataById(index){
       let data = null;
 
       try {
-          data = await this.instance.getSingleIdMetaData(id).call();
+          data = await this.instance.getSingleIdMetaData(index).call();
       } catch (error) {
           console.log(error);
       }
@@ -68,16 +68,18 @@ class Identity {
       return data;
   }
 
-  async setIdMetadata(metadata){
+  async setIdMetadata(metadata, accounts){
 
-    let tx;
-    let events;
+    let tx = null;
+    let events = null;
 
     try {
-        tx = await this.instance.addIdMetadata(metadata)
+        tx = await this.instance.addIdMetadata(metadata).send({from: accounts[0]});
+        events = tx.events.metadataAdded.returnValues;
     } catch (error) {
-        
+        console.log(error);
     }
+    return events;
   }
 
   getInstance() {

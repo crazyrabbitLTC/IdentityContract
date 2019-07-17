@@ -11,12 +11,12 @@ contract Metadata is WhitelistAdminRole, WhitelistedRole {
 
     string[] public metadata;
 
-    event metadataAdded(address identity, string metadata);
+    event metadataAdded(address identity, string metadata, uint index);
 
     function addIdMetadata(string calldata _metadata) external onlyWhitelistAdmin() {
         metadata.push(_metadata);
+        emit metadataAdded(address(this), _metadata, metadataCount.current());
         metadataCount.increment();
-        emit metadataAdded(address(this), _metadata);
     }
 
     function getTotalMetadata() view public returns(uint256){
