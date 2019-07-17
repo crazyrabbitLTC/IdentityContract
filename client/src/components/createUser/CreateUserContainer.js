@@ -1,28 +1,27 @@
 import React, { useState } from "react";
 import UserForm from "./UserForm";
+import { loadInstance } from "../../utils/identityUtils";
 
 const CreateUserContainer = props => {
   const { network, contracts } = props;
+  const { web3 } = network;
   const { instance } = contracts;
+  const identityArtifact = contracts.artifacts.Identity;
   const { accounts } = network;
   const { identityFactoryInstance } = instance;
   const factory = identityFactoryInstance.methods;
-
-  // const multiSigAddress =
-  //   contracts.artifacts.MultiSigFactory.networks[networkId].address;
-  // console.log("MultiSigAddress", multiSigAddress);
 
   const defaultStatus = {
     fetching: false,
     identityId: null,
     owner: null,
     identityAddress: null,
+    identityInstance: null,
     metadata: null
   };
   const [status, setStatus] = useState(defaultStatus);
 
   const createIdentity = async formData => {
-    
     const data = JSON.stringify(formData);
 
     setStatus({ fetching: true });
@@ -31,12 +30,11 @@ const CreateUserContainer = props => {
 
     try {
       tx = await factory
-      .createIdentity(accounts[0], data)
-      .send({ from: accounts[0] });
+        .createIdentity(accounts[0], data)
+        .send({ from: accounts[0] });
     } catch (error) {
       console.log("Create Identity Failed, error was: ", error);
     }
-
 
     let events = tx.events.identityCreated.returnValues;
     let {
@@ -46,15 +44,27 @@ const CreateUserContainer = props => {
       metadata
     } = tx.events.identityCreated.returnValues;
 
+    let identityInstance = null;
+    try {
+      identityInstance = await loadInstance(
+        web3,
+        identityArtifact,
+        identityAddress
+      );
+    } catch (error) {
+      console.log("Error loading Identity Instance");
+      console.log(error);
+    }
+
     metadata = JSON.parse(metadata);
 
-    //console.log(events);
     setStatus({
       fetching: false,
       identityAddress,
       owner,
       identityId,
-      metadata
+      metadata,
+      identityInstance
     });
   };
 

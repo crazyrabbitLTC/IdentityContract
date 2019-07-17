@@ -13,12 +13,11 @@ const UserForm = props => {
   const handleSubmit = e => {
     e.preventDefault();
     setFormState({ validated: true });
-    console.log("Inn handle submit");
+
     props.handleFormSubmit(formState);
   };
 
   const handleValidation = e => {
-    console.log(formState);
     const { name, value } = e.target;
 
     setFormState({ ...formState, [name]: value });
