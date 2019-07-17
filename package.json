@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/zeppelinos/zepkit/blob/stable/README.md",
   "dependencies": {
+    "@openzeppelin/cli": "^2.5.0-rc.0",
     "assert": "^2.0.0",
     "dotenv": "^6.2.0",
     "ganache-cli": "^6.4.4",

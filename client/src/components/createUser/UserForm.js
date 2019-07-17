@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Box } from "rimble-ui";
 
 const UserForm = props => {
-  //console.log("User form props", props);
+  console.log("User form props", props);
 
   const initialState = {
     name: null,

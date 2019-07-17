@@ -129,6 +129,8 @@ const App = () => {
     let multiSigFactoryInstance = {};
     let multiSigWalletInstance = {};
 
+   // console.log(`Networks: ${IdentityFactory.networks[networkId.toString()]} `);
+    //console.dir(IdentityFactory.networks[networkId.toString()]);
     try {
       if (Identity.networks) {
         let deployedNetwork = null;
@@ -184,6 +186,8 @@ const App = () => {
         multiSigFactoryInstance,
         multiSigWalletInstance
       };
+
+      console.log("The instances are: ", instance);
       return instance;
     } catch (e) {
       console.log(e);

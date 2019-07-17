@@ -23,15 +23,23 @@ const CreateUserContainer = props => {
   const [status, setStatus] = useState(defaultStatus);
 
   const createIdentity = async formData => {
-    console.log("here");
+    
     const data = JSON.stringify(formData);
-
+    console.log("Form data is: ", data);
     setStatus({ fetching: true });
 
-    const tx = await factory
+    let tx = null;
+    console.log("ONE")
+    try {
+      tx = await factory
       .createIdentity(accounts[0], data)
       .send({ from: accounts[0] });
+    } catch (error) {
+      console.log("Create Identity Failed, error was: ", error);
+    }
+    console.log("two")
     console.log("TransactionHash: ", tx);
+
     let events = tx.events.identityCreated.returnValues;
     let {
       identityAddress,
@@ -63,9 +71,9 @@ const CreateUserContainer = props => {
         <div>Identity Address: none Name: none photo: none</div>
       )}
 
-      <Button size={"medium"} onClick={() => createIdentity()}>
+      {/* <Button size={"medium"} onClick={() => createIdentity()}>
         Click me!
-      </Button>
+      </Button> */}
       <UserForm {...props} handleFormSubmit={createIdentity} />
     </div>
   );
