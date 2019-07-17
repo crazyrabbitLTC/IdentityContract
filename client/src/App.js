@@ -134,10 +134,10 @@ const App = () => {
     } = artifacts;
     const { web3, networkId } = network;
 
-    let identityInstance = {};
-    let identityFactoryInstance = {};
-    let multiSigFactoryInstance = {};
-    let multiSigWalletInstance = {};
+    let identityInstance = null;
+    let identityFactoryInstance = null;
+    let multiSigFactoryInstance = null;
+    let multiSigWalletInstance = null;
 
     //console.log(`Networks: ${IdentityFactory.networks[networkId.toString()]} `);
     //console.dir(IdentityFactory.networks[networkId.toString()]);

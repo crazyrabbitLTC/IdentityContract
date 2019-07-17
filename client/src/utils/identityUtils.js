@@ -33,4 +33,12 @@ const getIdentityById = async (id, instance) => {
   return identity;
 };
 
+const loadIdentity = async (address, web3, network, artfact) => {
+
+    let identityInstance = null;
+
+    
+
+}
+
 export { loadIdentityTotal, isIdentityFactoryReady, getIdentityById };
