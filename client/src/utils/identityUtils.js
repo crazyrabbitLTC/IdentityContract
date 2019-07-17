@@ -1,51 +1,88 @@
-const loadIdentityTotal = async instance => {
-  let total = null;
-  try {
-    total = await instance.identityCount().call();
-  } catch (error) {
-    console.log(error);
+class Identity {
+  constructor(instance) {
+    this.instance = instance;
   }
 
-  return total;
-};
+  async changeOwner(newOwnerAddress, accounts) {
+    //This function should change the owner of an Identity
+    //If they are permitted
+    let tx = null;
+    let events = null;
 
-const isIdentityFactoryReady = async instance => {
-  let ready = false;
-
-  try {
-    ready = await instance.contractInitialized().call();
-  } catch (error) {
-    console.log(error);
+    try {
+      tx = await this.instance
+        .changeOwner(newOwnerAddress)
+        .send({ from: accounts[0] });
+      events = tx.events.OwnerChanged.returnValues;
+    } catch (error) {
+      console.log(error);
+    }
+    return events;
   }
 
-  return ready;
-};
+  async getKeyData(key) {
 
-const getIdentityById = async (id, instance) => {
-  let identity = null;
-  try {
-    identity = await instance.identities(id).call();
-  } catch (error) {
-    console.log(error);
+    let data = null;
+
+    try {
+        data = await this.instance.getData(key).call();
+    } catch (error) {
+        console.log(error);
+    }
+    return data;
   }
 
-  return identity;
-};
+  async setKeyData(key, data, accounts) {
+    let tx;
+    let events;
+    try {
+        tx = await this.instance.setData(key, data).send({ from: accounts[0]});
+        events = tx.events.DataChanged.returnValues;
 
-const loadInstance = async (web3, artifact, address) => {
-  let instance = null;
-  try {
-    instance = new web3.eth.Contract(artifact.abi, address);
-  } catch (error) {
-    console.log(error);
+    } catch (error) {
+        console.log(error);
+    }
+    return events;
   }
 
-  return instance;
-};
+  async getTotalMetadata(){
+      let data = null;
+      try {
+          data = await this.instance.getTotalMetadata().call();
+      } catch (error) {
+          console.log(error)
+      }
 
-export {
-  loadIdentityTotal,
-  isIdentityFactoryReady,
-  getIdentityById,
-  loadInstance
-};
+      return data;
+  }
+
+  async getMetadataById(id){
+      let data = null;
+
+      try {
+          data = await this.instance.getSingleIdMetaData(id).call();
+      } catch (error) {
+          console.log(error);
+      }
+
+      return data;
+  }
+
+  async setIdMetadata(metadata){
+
+    let tx;
+    let events;
+
+    try {
+        tx = await this.instance.addIdMetadata(metadata)
+    } catch (error) {
+        
+    }
+  }
+
+  getInstance() {
+    return this.instance;
+  }
+}
+
+export default Identity;

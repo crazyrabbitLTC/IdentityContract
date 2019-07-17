@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import UserForm from "./UserForm";
-import { loadInstance } from "../../utils/identityUtils";
+import { loadInstance } from "../../utils/identityFactoryUtils";
 
 const CreateUserContainer = props => {
   const { network, contracts } = props;

@@ -8,7 +8,7 @@ import {
   isIdentityFactoryReady,
   getIdentityById,
   loadInstance
-} from "./utils/identityUtils";
+} from "./utils/identityFactoryUtils";
 
 import styles from "./App.module.scss";
 
