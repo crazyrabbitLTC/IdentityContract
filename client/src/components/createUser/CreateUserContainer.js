@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "rimble-ui";
+import React, { useState } from "react";
 import UserForm from "./UserForm";
 
 const CreateUserContainer = props => {
-  const { network, contracts, appReady, setAppState } = props;
-  const { instance, artifacts } = contracts;
-  const { web3, accounts, networkId } = network;
-  const { identityFactoryInstance, multiSigFactoryInstance } = instance;
+  const { network, contracts } = props;
+  const { instance } = contracts;
+  const { accounts } = network;
+  const { identityFactoryInstance } = instance;
   const factory = identityFactoryInstance.methods;
 
   // const multiSigAddress =

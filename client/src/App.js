@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
-import Boiler from "./components/boiler/boiler";
 import CreateUserContainer from "./components/createUser/CreateUserContainer";
 import FundMetaMask from "./components/fundMetaMask";
 import { Loader } from "rimble-ui";
-import {loadIdentityTotal, isIdentityFactoryReady, getIdentityById} from "./utils/identityUtils";
+import {
+  loadIdentityTotal,
+  isIdentityFactoryReady,
+  getIdentityById,
+  loadInstance
+} from "./utils/identityUtils";
 
 import styles from "./App.module.scss";
 
@@ -37,15 +41,20 @@ const App = () => {
       const instance = await loadContractInstances(artifacts, network);
       const contracts = { artifacts, instance };
       console.log("The contracts", contracts);
-      if(contracts.instance.identityFactoryInstance){
+      if (contracts.instance.identityFactoryInstance) {
         let instance = contracts.instance.identityFactoryInstance.methods;
         let total = await loadIdentityTotal(instance);
         let isREady = await isIdentityFactoryReady(instance);
-        let identityInfo = await getIdentityById(2,instance);
-        console.log("Total: ", total, " isReady: ", isREady , " identityInfo: ", identityInfo);
-
-      };
-
+        let identityInfo = await getIdentityById(2, instance);
+        console.log(
+          "Total: ",
+          total,
+          " isReady: ",
+          isREady,
+          " identityInfo: ",
+          identityInfo
+        );
+      }
 
       setState({
         ...state,
@@ -159,8 +168,9 @@ const App = () => {
         deployedNetwork = IdentityFactory.networks[networkId.toString()];
 
         if (deployedNetwork) {
-          identityFactoryInstance = new web3.eth.Contract(
-            IdentityFactory.abi,
+          identityFactoryInstance = await loadInstance(
+            web3,
+            IdentityFactory,
             deployedNetwork && deployedNetwork.address
           );
         }
@@ -171,8 +181,9 @@ const App = () => {
         deployedNetwork = MultiSigFactory.networks[networkId.toString()];
 
         if (deployedNetwork) {
-          multiSigFactoryInstance = new web3.eth.Contract(
-            MultiSigFactory.abi,
+          multiSigFactoryInstance = await loadInstance(
+            web3,
+            MultiSigFactory,
             deployedNetwork && deployedNetwork.address
           );
         }
@@ -183,10 +194,11 @@ const App = () => {
         deployedNetwork = MultiSigWallet.networks[networkId.toString()];
 
         if (deployedNetwork) {
-          multiSigWalletInstance = new web3.eth.Contract(
-            MultiSigWallet.abi,
+          multiSigWalletInstance = await loadInstance(
+            web3, 
+            MultiSigFactory,
             deployedNetwork && deployedNetwork.address
-          );
+          )
         }
       }
 

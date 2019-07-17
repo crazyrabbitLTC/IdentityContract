@@ -1,6 +1,5 @@
 const loadIdentityTotal = async instance => {
   let total = null;
-  console.log("The instance", instance);
   try {
     total = await instance.identityCount().call();
   } catch (error) {
@@ -33,12 +32,20 @@ const getIdentityById = async (id, instance) => {
   return identity;
 };
 
-const loadIdentity = async (address, web3, network, artfact) => {
+const loadInstance = async (web3, artifact, address) => {
+  let instance = null;
+  try {
+    instance = new web3.eth.Contract(artifact.abi, address);
+  } catch (error) {
+    console.log(error);
+  }
 
-    let identityInstance = null;
+  return instance;
+};
 
-    
-
-}
-
-export { loadIdentityTotal, isIdentityFactoryReady, getIdentityById };
+export {
+  loadIdentityTotal,
+  isIdentityFactoryReady,
+  getIdentityById,
+  loadInstance
+};
