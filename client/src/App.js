@@ -4,6 +4,7 @@ import Boiler from "./components/boiler/boiler";
 import CreateUserContainer from "./components/createUser/CreateUserContainer";
 import FundMetaMask from "./components/fundMetaMask";
 import { Loader } from "rimble-ui";
+import {loadIdentityTotal, isIdentityFactoryReady, getIdentityById} from "./utils/identityUtils";
 
 import styles from "./App.module.scss";
 
@@ -23,12 +24,10 @@ const App = () => {
     error: { status: false, message: null },
     fetchStatus: { loadingApp: true, txPending: false },
     appReady: false,
-    setAppState: null,
+    setAppState: null
   };
 
   const [state, setState] = useState(initialState);
-
-  
 
   useEffect(() => {
     const load = async () => {
@@ -37,14 +36,25 @@ const App = () => {
       const artifacts = await loadArtifacts();
       const instance = await loadContractInstances(artifacts, network);
       const contracts = { artifacts, instance };
+      console.log("The contracts", contracts);
+      if(contracts.instance.identityFactoryInstance){
+        let instance = contracts.instance.identityFactoryInstance.methods;
+        let total = await loadIdentityTotal(instance);
+        let isREady = await isIdentityFactoryReady(instance);
+        let identityInfo = await getIdentityById(2,instance);
+        console.log("Total: ", total, " isReady: ", isREady , " identityInfo: ", identityInfo);
 
-      setState({...state,
+      };
+
+
+      setState({
+        ...state,
         network,
         localNetwork,
         contracts,
         fetchStatus: { loadingApp: false, txPending: false },
         appReady: true,
-        setAppState: setState,
+        setAppState: setState
       });
     };
 
@@ -129,7 +139,7 @@ const App = () => {
     let multiSigFactoryInstance = {};
     let multiSigWalletInstance = {};
 
-   // console.log(`Networks: ${IdentityFactory.networks[networkId.toString()]} `);
+    //console.log(`Networks: ${IdentityFactory.networks[networkId.toString()]} `);
     //console.dir(IdentityFactory.networks[networkId.toString()]);
     try {
       if (Identity.networks) {
@@ -187,7 +197,7 @@ const App = () => {
         multiSigWalletInstance
       };
 
-      console.log("The instances are: ", instance);
+      //console.log("The instances are: ", instance);
       return instance;
     } catch (e) {
       console.log(e);
@@ -212,13 +222,13 @@ const App = () => {
         <p>Zepkit has created your app.</p>
         <h2>See your web3 info below:</h2>
         <CreateUserContainer {...state} />
-        <FundMetaMask {...state}/>
+        <FundMetaMask {...state} />
       </div>
     );
   };
 
   if (!state.network.web3) {
-    console.log("NOt rendering", state)
+    console.log("NOt rendering", state);
     return renderLoader();
   } else {
     return renderPage();
