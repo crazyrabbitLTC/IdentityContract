@@ -13,6 +13,8 @@ import {
 import styles from "./App.module.scss";
 
 const App = () => {
+
+  
   const initialState = {
     network: {
       web3: null,
@@ -31,16 +33,18 @@ const App = () => {
     setAppState: null
   };
 
+  
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
+    
     const load = async () => {
       const network = await loadNetwork();
       const localNetwork = await loadDevNetwork();
       const artifacts = await loadArtifacts();
       const instance = await loadContractInstances(artifacts, network);
       const contracts = { artifacts, instance };
-      console.log("The contracts", contracts);
+
       if (contracts.instance.identityFactoryInstance) {
         let instance = contracts.instance.identityFactoryInstance.methods;
         let total = await loadIdentityTotal(instance);
@@ -89,6 +93,7 @@ const App = () => {
         MultiSigWallet
       };
 
+      console.log("ARtifacts ", artifacts);
       return artifacts;
     } catch (e) {
       console.log(e);
@@ -209,6 +214,7 @@ const App = () => {
         multiSigWalletInstance
       };
 
+      
       //console.log("The instances are: ", instance);
       return instance;
     } catch (e) {

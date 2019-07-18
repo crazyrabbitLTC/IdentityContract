@@ -10,6 +10,7 @@ const CreateUserContainer = props => {
   const { accounts } = network;
   const { identityFactoryInstance } = instance;
   const factory = identityFactoryInstance.methods;
+  console.log("The Props: ", props);
 
   const defaultStatus = {
     fetching: false,

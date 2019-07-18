@@ -1,6 +1,8 @@
 class Identity {
-  constructor(instance) {
+  //Note this default address is dangerous, need to think of something better.
+  constructor(instance, defaultAddress = "0x0000000000000000000000000000000000000000") {
     this.instance = instance;
+    this.defaultAddress = defaultAddress;
   }
 
   async changeOwner(newOwnerAddress, accounts) {
@@ -60,7 +62,7 @@ class Identity {
       let data = null;
 
       try {
-          data = await this.instance.getSingleIdMetaData(index).call();
+          data = await this.instance.metadata(index).call();
       } catch (error) {
           console.log(error);
       }
@@ -81,6 +83,28 @@ class Identity {
     }
     return events;
   }
+
+  async contractCreate(bytecode, accounts, expandedEvents = false){
+    let tx = null;
+    let events = null;
+    let expanededEvents = null;
+    
+    try {
+      tx = await this.instance.execute(1, accounts[0], 0, bytecode, 0).send({from: accounts[0]});
+      expanededEvents = tx.events;
+      events = tx.events.contractCreated.returnValues;
+
+    } catch (error) {
+      console.log(error) 
+    }
+
+    if(expandedEvents){
+      return expandedEvents;
+    } else {
+      return events;
+    }
+  }
+
 
   getInstance() {
     return this.instance;
