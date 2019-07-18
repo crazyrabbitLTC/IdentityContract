@@ -11,10 +11,12 @@ contract ExecuteCall is WhitelistAdminRole, WhitelistedRole {
 
     event callExecuted(bool success);
     event contractCreated(address contractAddress, uint256 contractType, address creatingContract);
+    event callExecuted(address to, uint256 value, bytes data);
 
     function execute(uint256 _operationType, address _to, uint256 _value, bytes calldata _data, uint256 salt) external onlyWhitelistAdmin(){
         if (_operationType == OPERATION_CALL) {
             executeCall(_to, _value, _data);
+            emit callExecuted(_to, _value, _data);
         } else if (_operationType == OPERATION_CREATE) {
             address newContract = executeCreate(_data);
             emit contractCreated(newContract, OPERATION_CREATE, address(this));
