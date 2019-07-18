@@ -84,27 +84,52 @@ class Identity {
     return events;
   }
 
-  async contractCreate(bytecode, accounts, expandedEvents = false){
+  async contractCreate(bytecode, accounts, returnAllEvents = false){
     let tx = null;
     let events = null;
-    let expanededEvents = null;
+    let expandedEvents = null;
     
     try {
       tx = await this.instance.execute(1, accounts[0], 0, bytecode, 0).send({from: accounts[0]});
-      expanededEvents = tx.events;
+      expandedEvents = tx.events;
       events = tx.events.contractCreated.returnValues;
 
     } catch (error) {
       console.log(error) 
     }
 
-    if(expandedEvents){
+    if(returnAllEvents){
       return expandedEvents;
     } else {
       return events;
     }
   }
 
+  async contractCreate2(bytecode, accounts, salt, returnAllEvents = false){
+    let tx = null;
+    let events = null;
+    let expandedEvents = null;
+
+    try {
+      
+      tx = await this.instance.execute(2, accounts[0], 0, bytecode, salt).send({from: accounts[0]});
+      expandedEvents = tx.events;
+      events = tx.events.contractCreated.returnValues;
+    } catch (error) {
+      console.log(error)
+    }
+
+    if(returnAllEvents){
+      return expandedEvents;
+    }else {
+      return events;
+    }
+  }
+
+  async contractCreate2Mock(bytecode, accounts, salt) {
+
+    
+  }
 
   getInstance() {
     return this.instance;
