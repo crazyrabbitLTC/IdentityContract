@@ -30,7 +30,7 @@ const CreateUserContainer = props => {
     const data = JSON.stringify(metadata);
 
     console.log("Component Status before Fetch: ", status);
-    setStatus({fetching: true});
+    
     
 
     let tx = null;
@@ -43,8 +43,7 @@ const CreateUserContainer = props => {
     }
 
     console.log("Component Status after Fetch: ", status);
-    setStatus({fetching: false});
-
+    
   }
 
   const getTotalMetadata = async () => {
@@ -73,6 +72,21 @@ const CreateUserContainer = props => {
 
     console.log("The Metadata is: ", metadata);
     return metadata;
+  }
+
+  const getIdentityBalance = async (/*web3*/) => {
+    
+    let balance;
+
+    try {
+      balance = await web3.eth.getBalance(status.identityInstance._address); //Will give value in.
+      balance = web3.utils.fromWei(balance, 'ether');
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log("The balance is: ", balance);
+    return balance;
   }
 
 
@@ -111,6 +125,7 @@ const CreateUserContainer = props => {
     }
 
     metadata = JSON.parse(metadata);
+    console.log("The Identity: ", identityInstance._address);
 
     setStatus({
       fetching: false,
@@ -122,6 +137,7 @@ const CreateUserContainer = props => {
     });
   };
 
+  
   return (
     <div>
       {status.identityInstance ? (
@@ -131,6 +147,7 @@ const CreateUserContainer = props => {
           <Button onClick={()=> addMetaData({test: "This is metadata"})}>Add metadata: </Button>
           <Button onClick={()=> getTotalMetadata()}>Get Metadata in console</Button>
           <Button onClick={()=> getSingleMetadata(0)}>Get First Metadata</Button>
+          <Button onClick={()=> getIdentityBalance()}>Get Balance</Button>
         </div>
       ) : (
         <div>Create a New Identity</div>
