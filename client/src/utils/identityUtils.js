@@ -1,10 +1,3 @@
-class Identity {
-  //Note this default address is dangerous, need to think of something better.
-  constructor(instance, web3, defaultAddress = "0x0000000000000000000000000000000000000000") {
-    this.instance = instance;
-    this.defaultAddress = defaultAddress;
-    this.web3 = web3;
-  }
 
   async changeOwner(newOwnerAddress, accounts) {
     //This function should change the owner of an Identity
@@ -182,4 +175,3 @@ class Identity {
   }
 }
 
-export default Identity;
