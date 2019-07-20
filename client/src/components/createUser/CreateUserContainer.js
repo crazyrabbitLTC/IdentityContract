@@ -27,6 +27,7 @@ const CreateUserContainer = props => {
 
   const addMetaData = async metadata => {
     const identity = status.identityInstance.methods;
+    console.log("Identity methods: ", identity);
     const data = JSON.stringify(metadata);
 
     console.log("Component Status before Fetch: ", status);
@@ -89,6 +90,22 @@ const CreateUserContainer = props => {
     return balance;
   }
 
+  const sendEth = async (value, to) => {
+    //validate the to is a valid address and not a 0x0 address
+    const identity = status.identityInstance.methods;
+
+    value = web3.utils.toWei(value, "ether");
+    let tx;
+
+    try {
+      tx = await identity.sendEth(value, to).send({from: accounts[0]});
+      console.log("EVENT: ", tx.events.EthSent.returnValues);
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
+
 
   const createIdentity = async formData => {
     const data = JSON.stringify(formData);
@@ -148,6 +165,7 @@ const CreateUserContainer = props => {
           <Button onClick={()=> getTotalMetadata()}>Get Metadata in console</Button>
           <Button onClick={()=> getSingleMetadata(0)}>Get First Metadata</Button>
           <Button onClick={()=> getIdentityBalance()}>Get Balance</Button>
+          <Button onClick={()=> sendEth("0.5", "0x680f515538D98a271Fd9746412FA63a55107C178")}>Send Eth</Button>
         </div>
       ) : (
         <div>Create a New Identity</div>

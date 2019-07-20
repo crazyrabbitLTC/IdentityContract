@@ -1,11 +1,11 @@
 {
   "contracts": {
     "IdentityFactory": {
-      "address": "0x25CF3842bb99f7043fa47E9633981495AC911D6F",
-      "constructorCode": "60806040523480156100115760006000fd5b50610017565b6141c3806100266000396000f3fe",
-      "bodyBytecodeHash": "a495c926ccbd49bb31ca443c3b604541701bef7bc92c538ad1454ac731ff579f",
-      "localBytecodeHash": "ff04db4933c0ed87adc385de84cf068b9ef46bc83fcdd831b1d248bf9f3e5933",
-      "deployedBytecodeHash": "ff04db4933c0ed87adc385de84cf068b9ef46bc83fcdd831b1d248bf9f3e5933",
+      "address": "0x88d9B1ee9F1e4C8e2feF2Dc0A21077c1D560713F",
+      "constructorCode": "60806040523480156100115760006000fd5b50610017565b614357806100266000396000f3fe",
+      "bodyBytecodeHash": "6b7ce2252fa47df5e420a29ad8df33bfc985f198102a27867da455bd19b4ae6f",
+      "localBytecodeHash": "a05e0c2e6d656561d5bea642af17fafce669445fc091ef21509b539528816c89",
+      "deployedBytecodeHash": "a05e0c2e6d656561d5bea642af17fafce669445fc091ef21509b539528816c89",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -36,7 +36,7 @@
           "members": [
             {
               "label": "_value",
-              "astId": 2871,
+              "astId": 2898,
               "type": "t_uint256",
               "src": "1022:14:20"
             }
@@ -54,7 +54,7 @@
           "contract": "Initializable",
           "path": "zos-lib/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 5210,
+          "astId": 5237,
           "type": "t_bool",
           "src": "757:24:27"
         },
@@ -62,7 +62,7 @@
           "contract": "Initializable",
           "path": "zos-lib/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 5212,
+          "astId": 5239,
           "type": "t_bool",
           "src": "876:25:27"
         },
@@ -70,7 +70,7 @@
           "contract": "Initializable",
           "path": "zos-lib/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 5261,
+          "astId": 5288,
           "type": "t_array:50<t_uint256>",
           "src": "1891:29:27"
         },
@@ -78,7 +78,7 @@
           "contract": "RelayRecipient",
           "path": "tabookey-gasless/contracts/RelayRecipient.sol",
           "label": "relay_hub",
-          "astId": 4961,
+          "astId": 4988,
           "type": "t_address",
           "src": "763:26:25"
         },
@@ -86,7 +86,7 @@
           "contract": "IdentityFactory",
           "path": "contracts/IdentityFactory.sol",
           "label": "identityCount",
-          "astId": 2200,
+          "astId": 2227,
           "type": "t_struct<Counters.Counter>",
           "src": "336:37:13"
         },
@@ -94,7 +94,7 @@
           "contract": "IdentityFactory",
           "path": "contracts/IdentityFactory.sol",
           "label": "multiSigWalletFactory",
-          "astId": 2202,
+          "astId": 2229,
           "type": "t_address",
           "src": "380:51:13"
         },
@@ -102,7 +102,7 @@
           "contract": "IdentityFactory",
           "path": "contracts/IdentityFactory.sol",
           "label": "contractInitialized",
-          "astId": 2204,
+          "astId": 2231,
           "type": "t_bool",
           "src": "437:31:13"
         },
@@ -110,7 +110,7 @@
           "contract": "IdentityFactory",
           "path": "contracts/IdentityFactory.sol",
           "label": "identities",
-          "astId": 2208,
+          "astId": 2235,
           "type": "t_mapping<t_address>",
           "src": "475:43:13"
         }
@@ -124,7 +124,7 @@
       }
     },
     "MultiSigWalletFactory": {
-      "address": "0xC1ce3E7F42852d7fb11C0c05B36A39035741dc9f",
+      "address": "0x488565f6aF0CC0eC8996B565f4E220FED2FA4826",
       "constructorCode": "60806040523480156100115760006000fd5b50610017565b61458b806100266000396000f3fe",
       "bodyBytecodeHash": "106dda0a2376ff716fd727c0c22d0ad078d1e533fb9c459d0665392fd9da176b",
       "localBytecodeHash": "1789674eb9d92a4952c8ff9a08875e632b6c97dd2039f3423bf1a7698f13195d",
@@ -165,7 +165,7 @@
           "contract": "RelayRecipient",
           "path": "tabookey-gasless/contracts/RelayRecipient.sol",
           "label": "relay_hub",
-          "astId": 4961,
+          "astId": 4988,
           "type": "t_address",
           "src": "763:26:25"
         },
@@ -199,19 +199,19 @@
   "proxies": {
     "Identity/MultiSigWalletFactory": [
       {
-        "address": "0x02FC61ee15e77388D6257A9ee4FF765B45d01f9C",
+        "address": "0xC1eE76419811Dc163346D6342Bf260a5c3b150c3",
         "version": "0.1.0",
-        "implementation": "0xC1ce3E7F42852d7fb11C0c05B36A39035741dc9f",
-        "admin": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC",
+        "implementation": "0x488565f6aF0CC0eC8996B565f4E220FED2FA4826",
+        "admin": "0xD9dbc5aDB155C671bB403D07A47B2bbAF5DA51B4",
         "kind": "Upgradeable"
       }
     ],
     "Identity/IdentityFactory": [
       {
-        "address": "0x6e87e74a03188353A5eA52e6D8b41a300c7A3788",
+        "address": "0xD4b57366680fAe785DA585d96D90f2a11C6aAdeE",
         "version": "0.1.0",
-        "implementation": "0x25CF3842bb99f7043fa47E9633981495AC911D6F",
-        "admin": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC",
+        "implementation": "0x88d9B1ee9F1e4C8e2feF2Dc0A21077c1D560713F",
+        "admin": "0xD9dbc5aDB155C671bB403D07A47B2bbAF5DA51B4",
         "kind": "Upgradeable"
       }
     ]
@@ -219,6 +219,6 @@
   "manifestVersion": "2.2",
   "version": "0.1.0",
   "proxyAdmin": {
-    "address": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC"
+    "address": "0xD9dbc5aDB155C671bB403D07A47B2bbAF5DA51B4"
   }
 }

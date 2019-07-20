@@ -18,6 +18,7 @@ contract Identity is GSN, SocialRecovery, ExecuteCall, KeyData, Metadata {
 
     address public owner;
     event OwnerChanged(address indexed ownerAddress);
+    event EthSent(address recipient, uint256 value);
 
     function () external payable {}
 
@@ -30,6 +31,10 @@ contract Identity is GSN, SocialRecovery, ExecuteCall, KeyData, Metadata {
         emit OwnerChanged(owner);
     }
 
+    function sendEth(address payable _recipient, uint256 _valueInWei) external onlyWhitelistAdmin(){
+       _recipient.transfer(_valueInWei);
+        emit EthSent(_recipient, _valueInWei);
+    }
 
 
 }
