@@ -13,8 +13,17 @@ import {
 import styles from "./App.module.scss";
 
 const App = () => {
+  const setIdentityOnState = idInstance => {
+    setState({
+      ...state,
+      contracts: {
+        artifacts: state.contracts.artifacts,
+        instance: { ...state.contracts.instance, identityInstance: idInstance }
+      }
+    });
+    console.log("Identity set");
+  };
 
-  
   const initialState = {
     network: {
       web3: null,
@@ -30,14 +39,13 @@ const App = () => {
     error: { status: false, message: null },
     fetchStatus: { loadingApp: true, txPending: false },
     appReady: false,
-    setAppState: null
+    setAppState: null,
+    setIdentityOnState
   };
 
-  
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    
     const load = async () => {
       const network = await loadNetwork();
       const localNetwork = await loadDevNetwork();
@@ -200,10 +208,10 @@ const App = () => {
 
         if (deployedNetwork) {
           multiSigWalletInstance = await loadInstance(
-            web3, 
+            web3,
             MultiSigFactory,
             deployedNetwork && deployedNetwork.address
-          )
+          );
         }
       }
 
@@ -214,7 +222,6 @@ const App = () => {
         multiSigWalletInstance
       };
 
-      
       //console.log("The instances are: ", instance);
       return instance;
     } catch (e) {

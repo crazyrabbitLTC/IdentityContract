@@ -1,0 +1,224 @@
+{
+  "contracts": {
+    "IdentityFactory": {
+      "address": "0x25CF3842bb99f7043fa47E9633981495AC911D6F",
+      "constructorCode": "60806040523480156100115760006000fd5b50610017565b6141c3806100266000396000f3fe",
+      "bodyBytecodeHash": "a495c926ccbd49bb31ca443c3b604541701bef7bc92c538ad1454ac731ff579f",
+      "localBytecodeHash": "ff04db4933c0ed87adc385de84cf068b9ef46bc83fcdd831b1d248bf9f3e5933",
+      "deployedBytecodeHash": "ff04db4933c0ed87adc385de84cf068b9ef46bc83fcdd831b1d248bf9f3e5933",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_struct<Counters.Counter>": {
+          "id": "t_struct<Counters.Counter>",
+          "kind": "struct",
+          "label": "Counters.Counter",
+          "members": [
+            {
+              "label": "_value",
+              "astId": 2871,
+              "type": "t_uint256",
+              "src": "1022:14:20"
+            }
+          ]
+        },
+        "t_mapping<t_address>": {
+          "id": "t_mapping<t_address>",
+          "valueType": "t_address",
+          "label": "mapping(key => address)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 5210,
+          "type": "t_bool",
+          "src": "757:24:27"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 5212,
+          "type": "t_bool",
+          "src": "876:25:27"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 5261,
+          "type": "t_array:50<t_uint256>",
+          "src": "1891:29:27"
+        },
+        {
+          "contract": "RelayRecipient",
+          "path": "tabookey-gasless/contracts/RelayRecipient.sol",
+          "label": "relay_hub",
+          "astId": 4961,
+          "type": "t_address",
+          "src": "763:26:25"
+        },
+        {
+          "contract": "IdentityFactory",
+          "path": "contracts/IdentityFactory.sol",
+          "label": "identityCount",
+          "astId": 2200,
+          "type": "t_struct<Counters.Counter>",
+          "src": "336:37:13"
+        },
+        {
+          "contract": "IdentityFactory",
+          "path": "contracts/IdentityFactory.sol",
+          "label": "multiSigWalletFactory",
+          "astId": 2202,
+          "type": "t_address",
+          "src": "380:51:13"
+        },
+        {
+          "contract": "IdentityFactory",
+          "path": "contracts/IdentityFactory.sol",
+          "label": "contractInitialized",
+          "astId": 2204,
+          "type": "t_bool",
+          "src": "437:31:13"
+        },
+        {
+          "contract": "IdentityFactory",
+          "path": "contracts/IdentityFactory.sol",
+          "label": "identities",
+          "astId": 2208,
+          "type": "t_mapping<t_address>",
+          "src": "475:43:13"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    },
+    "MultiSigWalletFactory": {
+      "address": "0xC1ce3E7F42852d7fb11C0c05B36A39035741dc9f",
+      "constructorCode": "60806040523480156100115760006000fd5b50610017565b61458b806100266000396000f3fe",
+      "bodyBytecodeHash": "106dda0a2376ff716fd727c0c22d0ad078d1e533fb9c459d0665392fd9da176b",
+      "localBytecodeHash": "1789674eb9d92a4952c8ff9a08875e632b6c97dd2039f3423bf1a7698f13195d",
+      "deployedBytecodeHash": "1789674eb9d92a4952c8ff9a08875e632b6c97dd2039f3423bf1a7698f13195d",
+      "types": {
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_mapping<t_bool>": {
+          "id": "t_mapping<t_bool>",
+          "valueType": "t_bool",
+          "label": "mapping(key => bool)",
+          "kind": "mapping"
+        },
+        "t_array:dyn<t_address>": {
+          "id": "t_array:dyn<t_address>",
+          "valueType": "t_address",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address[]"
+        },
+        "t_mapping<t_array:dyn<t_address>>": {
+          "id": "t_mapping<t_array:dyn<t_address>>",
+          "valueType": "t_array:dyn<t_address>",
+          "label": "mapping(key => address[])",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "RelayRecipient",
+          "path": "tabookey-gasless/contracts/RelayRecipient.sol",
+          "label": "relay_hub",
+          "astId": 4961,
+          "type": "t_address",
+          "src": "763:26:25"
+        },
+        {
+          "contract": "Factory",
+          "path": "contracts/GnosisMultiSig/Factory.sol",
+          "label": "isInstantiation",
+          "astId": 339,
+          "type": "t_mapping<t_bool>",
+          "src": "258:47:4"
+        },
+        {
+          "contract": "Factory",
+          "path": "contracts/GnosisMultiSig/Factory.sol",
+          "label": "instantiations",
+          "astId": 344,
+          "type": "t_mapping<t_array:dyn<t_address>>",
+          "src": "311:51:4"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "Identity/MultiSigWalletFactory": [
+      {
+        "address": "0x02FC61ee15e77388D6257A9ee4FF765B45d01f9C",
+        "version": "0.1.0",
+        "implementation": "0xC1ce3E7F42852d7fb11C0c05B36A39035741dc9f",
+        "admin": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC",
+        "kind": "Upgradeable"
+      }
+    ],
+    "Identity/IdentityFactory": [
+      {
+        "address": "0x6e87e74a03188353A5eA52e6D8b41a300c7A3788",
+        "version": "0.1.0",
+        "implementation": "0x25CF3842bb99f7043fa47E9633981495AC911D6F",
+        "admin": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC",
+        "kind": "Upgradeable"
+      }
+    ]
+  },
+  "manifestVersion": "2.2",
+  "version": "0.1.0",
+  "proxyAdmin": {
+    "address": "0xf090314bD3DFcDD07c47cd82c300A4b537b097EC"
+  }
+}

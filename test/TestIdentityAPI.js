@@ -6,6 +6,8 @@ const {
   expectRevert
 } = require("openzeppelin-test-helpers");
 
+const {getEncodedCall, encodeParam, getCreate2Address, numberToUint256 } = require("../client/src/utils/identityUtils");
+
 const { expect } = require("chai");
 
 const IdentityFactory = artifacts.require("IdentityFactory");
@@ -13,7 +15,7 @@ const MultiSigWalletFactory = artifacts.require("MultiSigWalletFactory");
 const Identity = artifacts.require("Identity");
 const AccountContract = artifacts.require("Account");
 
-contract.skip("MultiSigWalletFactory", ([sender, receiver, thirdperson]) => {
+contract("Identity Factory", ([sender, receiver, thirdperson]) => {
   beforeEach(async function() {
     this.multiSigWalletFactory = await MultiSigWalletFactory.new();
     this.identityFactory = await IdentityFactory.new();
@@ -44,7 +46,7 @@ contract.skip("MultiSigWalletFactory", ([sender, receiver, thirdperson]) => {
   });
 });
 
-contract.skip("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
+contract("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
   const metadata = "Helllooo!!!";
   let identityAddress = null;
   this.identity = null;
@@ -68,6 +70,8 @@ contract.skip("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
     registeredOwner = logs[0].args.owner;
 
     this.identity = await Identity.at(identityAddress);
+
+
   });
 
   it("Expect the identity to belong to sender", async function() {
@@ -76,6 +80,14 @@ contract.skip("Identity", ([sender, receiver, thirdperson, fourthperson]) => {
 
     expect(owner).to.be.equal(sender);
   });
+
+  it("Change the Owner to a new users", async function() {
+    
+    const result = await this.identity.changeOwner(receiver, {from: sender});
+    const newOwner = await this.identity.owner();
+    expect(newOwner).to.be.equal(receiver);
+    expect(newOwner).to.not.be.equal(sender);
+  })
 
   it("Add additional Address to White list", async function() {
     const { logs } = await this.identity.addWhitelistAdmin(thirdperson, {

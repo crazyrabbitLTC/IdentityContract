@@ -13,7 +13,7 @@ const MultiSigWalletFactory = artifacts.require("MultiSigWalletFactory");
 const Identity = artifacts.require("Identity");
 const AccountContract = artifacts.require("Account");
 
-contract(
+contract.skip(
   "Identity: Create2",
   ([sender, receiver, thirdperson, fourthperson]) => {
     let identity = null;

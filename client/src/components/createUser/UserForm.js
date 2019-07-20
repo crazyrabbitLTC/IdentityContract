@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Button, Form, Box } from "rimble-ui";
 
+
 const UserForm = props => {
   const initialState = {
     name: null,
     photo: null,
-    validated: false
+    validated: true
   };
 
   const [formState, setFormState] = useState(initialState);

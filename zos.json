@@ -8,7 +8,7 @@
   "name": "Identity",
   "version": "0.1.0",
   "compiler": {
-    "manager": "zos",
+    "manager": "openzeppelin",
     "compilerSettings": {
       "optimizer": {}
     },
