@@ -22,4 +22,86 @@ const numberToUint256 = value => {
   return `0x${"0".repeat(64 - hex.length)}${hex}`;
 };
 
-module.exports = {getEncodedCall, encodeParam, getCreate2Address, numberToUint256}
+const addMetadata = async (metadata, instance, accounts) => {
+  const identity = instance.methods;
+  const data = JSON.stringify(metadata);
+  let tx = null;
+
+  try {
+    tx = await identity.addIdMetadata(data).send({ from: accounts[0] });
+    console.log(tx.events.metadataAdded.returnValues.metadata);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getTotalMetadata = async instance => {
+  const identity = instance.methods;
+  let count;
+  try {
+    count = await identity.getTotalMetadata().call();
+  } catch (error) {
+    console.log(error);
+  }
+  console.log("Meta Data Count is: ", count);
+  return count;
+};
+
+const getSingleMetadata = async (id, instance) => {
+  const identity = instance.methods;
+  let metadata;
+
+  try {
+    metadata = await identity.getSingleIdMetaData(id).call();
+  } catch (error) {
+    console.log(error);
+  }
+
+  console.log("The Metadata is: ", metadata);
+  return metadata;
+};
+
+const getIdentityBalance = async (web3, instance) => {
+  let balance;
+
+  try {
+    balance = await web3.eth.getBalance(instance._address); //Will give value in.
+    balance = web3.utils.fromWei(balance, "ether");
+  } catch (error) {
+    console.log(error);
+  }
+
+  console.log("The balance is: ", balance);
+  return balance;
+};
+
+const sendEth = async (value, to, web3, instance, accounts) => {
+  //validate the to is a valid address and not a 0x0 address
+  const identity = instance.methods;
+
+  value = web3.utils.toWei(value, "ether");
+  console.log("Value sent is: ", value);
+  let tx;
+
+  try {
+    tx = await identity
+      .sendEth(to, value)
+      .send({ from: accounts[0] });
+    console.log("EVENT: ", tx.events.EthSent.returnValues);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+export {
+  sendEth,
+  getIdentityBalance,
+  getSingleMetadata,
+  getTotalMetadata,
+  addMetadata,
+  getEncodedCall,
+  encodeParam,
+  getCreate2Address,
+  numberToUint256
+};

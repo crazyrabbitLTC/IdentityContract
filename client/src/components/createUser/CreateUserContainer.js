@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import UserForm from "./UserForm";
 import { loadInstance } from "../../utils/identityFactoryUtils";
 import { Button } from "rimble-ui";
+import {
+  addMetadata,
+  getTotalMetadata,
+  getSingleMetadata,
+  getIdentityBalance,
+  sendEth
+} from "../../utils/identityUtils";
 
 const CreateUserContainer = props => {
   const { network, contracts, setIdentityOnState } = props;
@@ -12,7 +19,6 @@ const CreateUserContainer = props => {
   const { identityFactoryInstance } = instance;
   const factory = identityFactoryInstance.methods;
 
-
   const defaultStatus = {
     fetching: false,
     identityId: null,
@@ -22,90 +28,6 @@ const CreateUserContainer = props => {
     metadata: null
   };
   const [status, setStatus] = useState(defaultStatus);
-
-  
-
-  const addMetaData = async metadata => {
-    const identity = status.identityInstance.methods;
-    console.log("Identity methods: ", identity);
-    const data = JSON.stringify(metadata);
-
-    console.log("Component Status before Fetch: ", status);
-    
-    
-
-    let tx = null;
-
-    try {
-      tx = await identity.addIdMetadata(data).send({from: accounts[0]});
-      console.log(tx.events.metadataAdded.returnValues.metadata);
-    } catch (error) {
-      console.log(error)
-    }
-
-    console.log("Component Status after Fetch: ", status);
-    
-  }
-
-  const getTotalMetadata = async () => {
-    const identity = status.identityInstance.methods;
-    let count;
-
-    try {
-      count = await identity.getTotalMetadata().call();
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("Meta Data Count is: ", count);
-    return count;
-  }
-
-  const getSingleMetadata = async (id) => {
-    const identity = status.identityInstance.methods;
-    let metadata;
-
-    try {
-      metadata = await identity.getSingleIdMetaData(id).call();     
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("The Metadata is: ", metadata);
-    return metadata;
-  }
-
-  const getIdentityBalance = async (/*web3*/) => {
-    
-    let balance;
-
-    try {
-      balance = await web3.eth.getBalance(status.identityInstance._address); //Will give value in.
-      balance = web3.utils.fromWei(balance, 'ether');
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log("The balance is: ", balance);
-    return balance;
-  }
-
-  const sendEth = async (value, to) => {
-    //validate the to is a valid address and not a 0x0 address
-    const identity = status.identityInstance.methods;
-
-    value = web3.utils.toWei(value, "ether");
-    console.log("Value sent is: ", value);
-    let tx;
-
-    try {
-      tx = await identity.sendEth(accounts[0], value).send({from: accounts[0]});
-      console.log("EVENT: ", tx.events.EthSent.returnValues);
-    } catch (error) {
-      console.log(error);
-    }
-    
-  }
 
 
   const createIdentity = async formData => {
@@ -155,26 +77,50 @@ const CreateUserContainer = props => {
     });
   };
 
-  
   return (
     <div>
       {status.identityInstance ? (
         <div>
           Identity Address: {status.identityAddress}
           Name: {status.metadata.name} photo: {status.metadata.photo}
-          <Button onClick={()=> addMetaData({test: "This is metadata"})}>Add metadata: </Button>
-          <Button onClick={()=> getTotalMetadata()}>Get Metadata in console</Button>
-          <Button onClick={()=> getSingleMetadata(0)}>Get First Metadata</Button>
-          <Button onClick={()=> getIdentityBalance()}>Get Balance</Button>
-          <Button onClick={()=> sendEth("0.5", "0x680f515538D98a271Fd9746412FA63a55107C178")}>Send Eth</Button>
+          <Button
+            onClick={() =>
+              addMetadata(
+                { test: "This is metadata" },
+                status.identityInstance,
+                accounts
+              )
+            }
+          >
+            Add metadata:{" "}
+          </Button>
+          <Button onClick={() => getTotalMetadata(status.identityInstance)}>
+            Get Metadata in console
+          </Button>
+          <Button onClick={() => getSingleMetadata(0, status.identityInstance)}>
+            Get First Metadata
+          </Button>
+          <Button
+            onClick={() => getIdentityBalance(web3, status.identityInstance)}
+          >
+            Get Balance
+          </Button>
+          <Button
+            onClick={() =>
+              sendEth("0.5", "0x680f515538D98a271Fd9746412FA63a55107C178", web3, status.identityInstance, accounts)
+            }
+          >
+            Send Eth
+          </Button>
         </div>
       ) : (
         <div>Create a New Identity</div>
       )}
 
       {status.identityInstance ? (
-        <div><div>Identity Created</div>
-       </div>
+        <div>
+          <div>Identity Created</div>
+        </div>
       ) : (
         <UserForm {...props} handleFormSubmit={createIdentity} />
       )}
