@@ -95,10 +95,11 @@ const CreateUserContainer = props => {
     const identity = status.identityInstance.methods;
 
     value = web3.utils.toWei(value, "ether");
+    console.log("Value sent is: ", value);
     let tx;
 
     try {
-      tx = await identity.sendEth(value, to).send({from: accounts[0]});
+      tx = await identity.sendEth(accounts[0], value).send({from: accounts[0]});
       console.log("EVENT: ", tx.events.EthSent.returnValues);
     } catch (error) {
       console.log(error);
