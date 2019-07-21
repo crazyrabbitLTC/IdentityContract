@@ -10,6 +10,7 @@ import {
   loadInstance
 } from "./utils/identityFactoryUtils";
 
+
 import styles from "./App.module.scss";
 
 const App = () => {
@@ -161,21 +162,23 @@ const App = () => {
     let multiSigFactoryInstance = null;
     let multiSigWalletInstance = null;
 
+    let rememberUser = window.localStorage.getItem('userIdentity');
+    //console.log("Was User stored on Local stoarge?: ", rememberUser);
+    let result = window.localStorage.getItem('userIdentity');
+    //console.log("trying to load at startup: ", result);
+    let userIdentity =localStorage.getItem('userIdentity');
+    
+    userIdentity = JSON.parse(userIdentity);
+    console.log("User Identity: ", userIdentity);
+
     //console.log(`Networks: ${IdentityFactory.networks[networkId.toString()]} `);
     //console.dir(IdentityFactory.networks[networkId.toString()]);
     try {
-      if (Identity.networks) {
-        let deployedNetwork = null;
-        deployedNetwork = Identity.networks[networkId.toString()];
-
-        if (deployedNetwork) {
-          identityInstance = new web3.eth.Contract(
-            Identity.abi,
-            deployedNetwork && deployedNetwork.address
-          );
-        }
+      
+      if(rememberUser){
+        identityInstance = new web3.eth.Contract(userIdentity.artifact.abi, userIdentity.address);
       }
-
+      
       if (IdentityFactory.networks) {
         let deployedNetwork = null;
         deployedNetwork = IdentityFactory.networks[networkId.toString()];
@@ -222,7 +225,7 @@ const App = () => {
         multiSigWalletInstance
       };
 
-      //console.log("The instances are: ", instance);
+      console.log("The instances are: ", instance);
       return instance;
     } catch (e) {
       console.log(e);

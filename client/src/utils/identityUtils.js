@@ -115,7 +115,26 @@ const sendEth = async (value, to, web3, instance, accounts) => {
   }
 };
 
+const putIdentityOnLocalStorage = (address, artifact, metadata) => {
+  let storedObject = {
+    address,
+    artifact,
+    metadata
+  }
+  window.localStorage.setItem('userIdentity', JSON.stringify(storedObject));
+  console.log("The Stored Object is: ", storedObject);
+  let result = window.localStorage.getItem('userIdentity');
+  //console.log("What was really stored: ", result);
+}
+
+const clearIdentityFromLocalStorage = () => {
+  window.localStorage.removeItem('userIdentity');
+  console.log("Identity Cleared from Local Storage");
+}
+
 export {
+  clearIdentityFromLocalStorage,
+  putIdentityOnLocalStorage,
   createIdentity,
   sendEth,
   getIdentityBalance,

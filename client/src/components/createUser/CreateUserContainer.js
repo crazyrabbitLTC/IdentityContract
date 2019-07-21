@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserForm from "./UserForm";
-import { loadInstance } from "../../utils/identityFactoryUtils";
+import { loadInstance } from "../../utils/utils";
 import { Button } from "rimble-ui";
 import {
   addMetadata,
@@ -8,7 +8,9 @@ import {
   getSingleMetadata,
   getIdentityBalance,
   sendEth,
-  createIdentity
+  createIdentity,
+  putIdentityOnLocalStorage,
+  clearIdentityFromLocalStorage 
 } from "../../utils/identityUtils";
 
 const CreateUserContainer = props => {
@@ -29,45 +31,52 @@ const CreateUserContainer = props => {
   };
   const [status, setStatus] = useState(defaultStatus);
 
-  const createIdentity2 = async (formData) => {
+  useEffect(() => {
+    if(instance.identityInstance){
+      setStatus({identityInstance: instance.identityInstance})
+    }
+
+    console.log("Instance put on local state");
+  }, []);
+
+
+  const mintIdentity = async formData => {
     let { identityAddress, owner, identityId, metadata } = await createIdentity(
       formData,
       identityFactoryInstance,
       accounts
     );
 
-    let identityInstance;
+    let identityInstance = await loadInstance(
+      web3,
+      identityArtifact,
+      identityAddress
+    );
 
-    try {
-      identityInstance = await loadInstance(
-        web3,
-        identityArtifact,
-        identityAddress
-      );
-    } catch (error) {
-      console.log("Error loading Identity Instance");
-      console.log(error);
-    }
-
-    let metadata2 = JSON.parse(metadata);
+    let parsedMetadata = JSON.parse(metadata);
     console.log("The Identity: ", identityInstance._address);
+   
+    putIdentityOnLocalStorage(identityAddress, identityArtifact, metadata);
 
     setStatus({
       fetching: false,
       identityAddress,
       owner,
       identityId,
-      metadata: metadata2,
+      metadata: parsedMetadata,
       identityInstance
     });
   };
+
+
+
 
   return (
     <div>
       {status.identityInstance ? (
         <div>
-          Identity Address: {status.identityAddress}
-          Name: {status.metadata.name} photo: {status.metadata.photo}
+          Identity Address: {status.identityInstance._address}
+          {/* Name:    photo: {status.metadata.photo} */}
           <Button
             onClick={() =>
               addMetadata(
@@ -90,6 +99,7 @@ const CreateUserContainer = props => {
           >
             Get Balance
           </Button>
+          <Button onClick={()=> clearIdentityFromLocalStorage()}>Clear Local Storage</Button>
           <Button
             onClick={() =>
               sendEth(
@@ -113,7 +123,7 @@ const CreateUserContainer = props => {
           <div>Identity Created</div>
         </div>
       ) : (
-        <UserForm {...props} handleFormSubmit={createIdentity2} />
+        <UserForm {...props} handleFormSubmit={mintIdentity} />
       )}
     </div>
   );
