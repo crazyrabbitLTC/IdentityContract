@@ -7,6 +7,30 @@ const encodeParam = (dataType, data) => {
   return this.web3.eth.abi.encodeParameter(dataType, data);
 };
 
+const createIdentity = async (dataObject, identityFactoryInstance, accounts) => {
+  const data = JSON.stringify(dataObject);
+  const factory = identityFactoryInstance.methods;
+
+  let tx = null;
+
+  try {
+    tx = await factory
+      .createIdentity(accounts[0], data)
+      .send({ from: accounts[0] });
+  } catch (error) {
+    console.log("Create Identity Failed, error was: ", error);
+  }
+
+  let {
+    identityAddress,
+    owner,
+    identityId,
+    metadata
+  } = tx.events.identityCreated.returnValues;
+
+  return ({identityAddress, owner, identityId, metadata});
+};
+
 const getCreate2Address = (creatorAddress, saltHex, byteCode) => {
   return `0x${this.web3.utils
     .sha3(
@@ -84,17 +108,15 @@ const sendEth = async (value, to, web3, instance, accounts) => {
   let tx;
 
   try {
-    tx = await identity
-      .sendEth(to, value)
-      .send({ from: accounts[0] });
+    tx = await identity.sendEth(to, value).send({ from: accounts[0] });
     console.log("EVENT: ", tx.events.EthSent.returnValues);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 export {
+  createIdentity,
   sendEth,
   getIdentityBalance,
   getSingleMetadata,

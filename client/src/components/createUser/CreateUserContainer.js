@@ -7,17 +7,17 @@ import {
   getTotalMetadata,
   getSingleMetadata,
   getIdentityBalance,
-  sendEth
+  sendEth,
+  createIdentity
 } from "../../utils/identityUtils";
 
 const CreateUserContainer = props => {
-  const { network, contracts, setIdentityOnState } = props;
+  const { network, contracts } = props;
   const { web3 } = network;
   const { instance } = contracts;
   const identityArtifact = contracts.artifacts.Identity;
   const { accounts } = network;
   const { identityFactoryInstance } = instance;
-  const factory = identityFactoryInstance.methods;
 
   const defaultStatus = {
     fetching: false,
@@ -29,30 +29,15 @@ const CreateUserContainer = props => {
   };
   const [status, setStatus] = useState(defaultStatus);
 
+  const createIdentity2 = async (formData) => {
+    let { identityAddress, owner, identityId, metadata } = await createIdentity(
+      formData,
+      identityFactoryInstance,
+      accounts
+    );
 
-  const createIdentity = async formData => {
-    const data = JSON.stringify(formData);
+    let identityInstance;
 
-    setStatus({ fetching: true });
-
-    let tx = null;
-
-    try {
-      tx = await factory
-        .createIdentity(accounts[0], data)
-        .send({ from: accounts[0] });
-    } catch (error) {
-      console.log("Create Identity Failed, error was: ", error);
-    }
-
-    let {
-      identityAddress,
-      owner,
-      identityId,
-      metadata
-    } = tx.events.identityCreated.returnValues;
-
-    let identityInstance = null;
     try {
       identityInstance = await loadInstance(
         web3,
@@ -64,7 +49,7 @@ const CreateUserContainer = props => {
       console.log(error);
     }
 
-    metadata = JSON.parse(metadata);
+    let metadata2 = JSON.parse(metadata);
     console.log("The Identity: ", identityInstance._address);
 
     setStatus({
@@ -72,7 +57,7 @@ const CreateUserContainer = props => {
       identityAddress,
       owner,
       identityId,
-      metadata,
+      metadata: metadata2,
       identityInstance
     });
   };
@@ -107,7 +92,13 @@ const CreateUserContainer = props => {
           </Button>
           <Button
             onClick={() =>
-              sendEth("0.5", "0x680f515538D98a271Fd9746412FA63a55107C178", web3, status.identityInstance, accounts)
+              sendEth(
+                "0.5",
+                "0x680f515538D98a271Fd9746412FA63a55107C178",
+                web3,
+                status.identityInstance,
+                accounts
+              )
             }
           >
             Send Eth
@@ -122,7 +113,7 @@ const CreateUserContainer = props => {
           <div>Identity Created</div>
         </div>
       ) : (
-        <UserForm {...props} handleFormSubmit={createIdentity} />
+        <UserForm {...props} handleFormSubmit={createIdentity2} />
       )}
     </div>
   );
