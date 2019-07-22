@@ -3,8 +3,8 @@ const getEncodedCall = (web3, artifact, method, params = []) => {
   return contract.methods[method](...params).encodeABI();
 };
 
-const encodeParam = (dataType, data) => {
-  return this.web3.eth.abi.encodeParameter(dataType, data);
+const encodeParam = (web3, dataType, data) => {
+  return web3.eth.abi.encodeParameter(dataType, data);
 };
 
 const createIdentity = async (
@@ -134,10 +134,18 @@ const clearIdentityFromLocalStorage = () => {
   console.log("Identity Cleared from Local Storage");
 };
 
-const deployContract = async (identityInstance, bytecode, accounts) => {
+const deployContract = async (web3, identityInstance, accountBytecode, accounts, parens ) => {
   const identity = identityInstance.methods;
   let tx;
+
+
+  const bytecode = `${accountBytecode}${encodeParam(web3,
+    "address",
+    "0x262d41499c802decd532fd65d991e477a068e132"
+  ).slice(2)}`;
+
   try {
+    console.log("The Accounts: ", accounts);
     tx = await identity.execute(1, accounts[0], 0, bytecode, 0).send({from: accounts[0]});
     console.log("Full transactions: ", tx);
     console.log("EVENT: ", tx.events.contractCreated.returnValues);

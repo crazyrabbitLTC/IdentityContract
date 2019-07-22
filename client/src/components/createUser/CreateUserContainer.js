@@ -147,7 +147,7 @@ const CreateUserContainer = props => {
           >
             Make Remote Call
           </Button>
-          <Button onClick={() => deployContract(status.identityInstance, accountContract.bytecode, accounts)}>
+          <Button onClick={() => deployContract(web3, status.identityInstance, accountContract.bytecode, accounts)}>
             Deploy Contract
           </Button>
         </div>
