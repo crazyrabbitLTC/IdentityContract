@@ -3,6 +3,7 @@ import UserForm from "./UserForm";
 import { loadInstance } from "../../utils/utils";
 import { Button } from "rimble-ui";
 import {
+  executeCall,
   addMetadata,
   getTotalMetadata,
   getSingleMetadata,
@@ -10,8 +11,13 @@ import {
   sendEth,
   createIdentity,
   putIdentityOnLocalStorage,
-  clearIdentityFromLocalStorage 
+  clearIdentityFromLocalStorage,
+  deployContract
 } from "../../utils/identityUtils";
+
+const accountContract = require("../../../../contracts/Account.sol");
+
+console.log("Here is Account Contract", accountContract);
 
 const CreateUserContainer = props => {
   const { network, contracts } = props;
@@ -32,13 +38,25 @@ const CreateUserContainer = props => {
   const [status, setStatus] = useState(defaultStatus);
 
   useEffect(() => {
-    if(instance.identityInstance){
-      setStatus({identityInstance: instance.identityInstance})
-    }
+    const load = async () => {
+      if (instance.identityInstance) {
+        const total = await getTotalMetadata(instance.identityInstance);
+        const metadata = await getSingleMetadata(0, instance.identityInstance);
+        const balance = await getIdentityBalance(
+          web3,
+          instance.identityInstance
+        );
+        metadata.total = total;
+        metadata.balance = balance;
 
+        console.log("The metadata is: ", metadata);
+        setStatus({ identityInstance: instance.identityInstance, metadata });
+      }
+    };
+
+    load();
     console.log("Instance put on local state");
   }, []);
-
 
   const mintIdentity = async formData => {
     let { identityAddress, owner, identityId, metadata } = await createIdentity(
@@ -55,7 +73,7 @@ const CreateUserContainer = props => {
 
     let parsedMetadata = JSON.parse(metadata);
     console.log("The Identity: ", identityInstance._address);
-   
+
     putIdentityOnLocalStorage(identityAddress, identityArtifact, metadata);
 
     setStatus({
@@ -68,15 +86,14 @@ const CreateUserContainer = props => {
     });
   };
 
-
-
-
   return (
     <div>
       {status.identityInstance ? (
         <div>
           Identity Address: {status.identityInstance._address}
-          {/* Name:    photo: {status.metadata.photo} */}
+          Name: {status.metadata.name} photo: {status.metadata.photo}
+          Total Entries: {status.metadata.total} Balance:{" "}
+          {status.metadata.balance}
           <Button
             onClick={() =>
               addMetadata(
@@ -99,7 +116,9 @@ const CreateUserContainer = props => {
           >
             Get Balance
           </Button>
-          <Button onClick={()=> clearIdentityFromLocalStorage()}>Clear Local Storage</Button>
+          <Button onClick={() => clearIdentityFromLocalStorage()}>
+            Clear Local Storage
+          </Button>
           <Button
             onClick={() =>
               sendEth(
@@ -112,6 +131,24 @@ const CreateUserContainer = props => {
             }
           >
             Send Eth
+          </Button>
+          <Button
+            onClick={() =>
+              executeCall(
+                web3,
+                status.identityInstance,
+                accountContract.abi,
+                "0x680f515538D98a271Fd9746412FA63a55107C178",
+                "setOwner",
+                accounts,
+                accounts
+              )
+            }
+          >
+            Make Remote Call
+          </Button>
+          <Button onClick={() => deployContract(status.identityInstance, accountContract.bytecode, accounts)}>
+            Deploy Contract
           </Button>
         </div>
       ) : (

@@ -95,6 +95,7 @@ const App = () => {
       MultiSigFactory = require("../../contracts/GnosisMultiSig/MultiSigWalletFactory.sol");
       MultiSigWallet = require("../../contracts/GnosisMultiSig/MultiSigWallet.sol");
 
+
       let artifacts = {
         Identity,
         IdentityFactory,

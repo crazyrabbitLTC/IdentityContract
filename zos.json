@@ -2,7 +2,8 @@
   "zosversion": "2.2",
   "contracts": {
     "IdentityFactory": "IdentityFactory",
-    "MultiSigWalletFactory": "MultiSigWalletFactory"
+    "MultiSigWalletFactory": "MultiSigWalletFactory",
+    "Account": "Account"
   },
   "dependencies": {},
   "name": "Identity",

@@ -6,7 +6,6 @@ const {
   expectRevert
 } = require("openzeppelin-test-helpers");
 
-const {getEncodedCall, encodeParam, getCreate2Address, numberToUint256 } = require("../client/src/utils/identityUtils");
 
 const { expect } = require("chai");
 

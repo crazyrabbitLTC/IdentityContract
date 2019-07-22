@@ -7,7 +7,11 @@ const encodeParam = (dataType, data) => {
   return this.web3.eth.abi.encodeParameter(dataType, data);
 };
 
-const createIdentity = async (dataObject, identityFactoryInstance, accounts) => {
+const createIdentity = async (
+  dataObject,
+  identityFactoryInstance,
+  accounts
+) => {
   const data = JSON.stringify(dataObject);
   const factory = identityFactoryInstance.methods;
 
@@ -28,7 +32,7 @@ const createIdentity = async (dataObject, identityFactoryInstance, accounts) => 
     metadata
   } = tx.events.identityCreated.returnValues;
 
-  return ({identityAddress, owner, identityId, metadata});
+  return { identityAddress, owner, identityId, metadata };
 };
 
 const getCreate2Address = (creatorAddress, saltHex, byteCode) => {
@@ -80,7 +84,7 @@ const getSingleMetadata = async (id, instance) => {
   } catch (error) {
     console.log(error);
   }
-
+  metadata = JSON.parse(metadata);
   console.log("The Metadata is: ", metadata);
   return metadata;
 };
@@ -113,6 +117,7 @@ const sendEth = async (value, to, web3, instance, accounts) => {
   } catch (error) {
     console.log(error);
   }
+  return tx;
 };
 
 const putIdentityOnLocalStorage = (address, artifact, metadata) => {
@@ -120,19 +125,64 @@ const putIdentityOnLocalStorage = (address, artifact, metadata) => {
     address,
     artifact,
     metadata
-  }
-  window.localStorage.setItem('userIdentity', JSON.stringify(storedObject));
-  console.log("The Stored Object is: ", storedObject);
-  let result = window.localStorage.getItem('userIdentity');
-  //console.log("What was really stored: ", result);
-}
+  };
+  window.localStorage.setItem("userIdentity", JSON.stringify(storedObject));
+};
 
 const clearIdentityFromLocalStorage = () => {
-  window.localStorage.removeItem('userIdentity');
+  window.localStorage.removeItem("userIdentity");
   console.log("Identity Cleared from Local Storage");
-}
+};
+
+const deployContract = async (identityInstance, bytecode, accounts) => {
+  const identity = identityInstance.methods;
+  let tx;
+  try {
+    tx = await identity.execute(1, accounts[0], 0, bytecode, 0).send({from: accounts[0]});
+    console.log("Full transactions: ", tx);
+    console.log("EVENT: ", tx.events.contractCreated.returnValues);
+  } catch (error) {
+    console.log(error);
+  }
+
+  return tx;
+};
+
+const executeCall = async (
+  web3,
+  identityInstance,
+  destinationAbi,
+  destinationAddress,
+  method,
+  params,
+  accounts
+) => {
+  const identity = identityInstance.methods;
+  const getEncodedCall = (abi, method, params) => {
+    const contract = new web3.eth.Contract(abi);
+    return contract.methods[method](...params).encodeABI();
+  };
+  const encodedCall = getEncodedCall(destinationAbi, method, params);
+
+  let result;
+
+  try {
+    result = await identity
+      .execute(0, destinationAddress, 0, encodedCall, 0)
+      .send({
+        from: accounts[0]
+      });
+    console.log("The Execute call result is: ", result);
+  } catch (error) {
+    console.log(error);
+  }
+
+  return result;
+};
 
 export {
+  deployContract,
+  executeCall,
   clearIdentityFromLocalStorage,
   putIdentityOnLocalStorage,
   createIdentity,
